@@ -213,7 +213,8 @@ func DownloadAssetToDir(ctx context.Context, client *http.Client, assetURL, asse
 
 func safeAssetName(name string) (string, error) {
 	name = strings.TrimSpace(name)
-	name = filepath.Base(strings.ReplaceAll(name, "/", string(filepath.Separator)))
+	separator := string(filepath.Separator)
+	name = filepath.Base(strings.NewReplacer("/", separator, "\\", separator).Replace(name))
 	if name == "" || name == "." || name == string(filepath.Separator) {
 		return "", fmt.Errorf("asset name is empty")
 	}
