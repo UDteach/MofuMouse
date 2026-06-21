@@ -1,0 +1,676 @@
+{
+  "version": 1,
+  "asset_policy": "ImageGen-only production assets; source images are treated as masters; runtime tiers are exported at 32/48/64/96px where available.",
+  "sprites": [
+    {
+      "id": "degu_idle_agouti",
+      "path": "sprites/degu_idle_agouti.png",
+      "source": "source/imagegen-idle-agouti-v2.png",
+      "pose": "idle",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_idle_agouti.png",
+        "48": "sprites/48/degu_idle_agouti.png",
+        "64": "sprites/64/degu_idle_agouti.png",
+        "96": "sprites/96/degu_idle_agouti.png"
+      }
+    },
+    {
+      "id": "degu_walk_agouti",
+      "path": "sprites/degu_walk_agouti.png",
+      "source": "source/imagegen-walk-agouti-v4.png",
+      "pose": "walk",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk_agouti.png",
+        "48": "sprites/48/degu_walk_agouti.png",
+        "64": "sprites/64/degu_walk_agouti.png",
+        "96": "sprites/96/degu_walk_agouti.png"
+      }
+    },
+    {
+      "id": "degu_walk_gray",
+      "path": "sprites/degu_walk_gray.png",
+      "source": "source/imagegen-walk-gray-v2.png",
+      "pose": "walk",
+      "coat": "gray",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk_gray.png",
+        "48": "sprites/48/degu_walk_gray.png",
+        "64": "sprites/64/degu_walk_gray.png",
+        "96": "sprites/96/degu_walk_gray.png"
+      }
+    },
+    {
+      "id": "degu_walk_dark",
+      "path": "sprites/degu_walk_dark.png",
+      "source": "source/imagegen-walk-dark-v2.png",
+      "pose": "walk",
+      "coat": "dark",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk_dark.png",
+        "48": "sprites/48/degu_walk_dark.png",
+        "64": "sprites/64/degu_walk_dark.png",
+        "96": "sprites/96/degu_walk_dark.png"
+      }
+    },
+    {
+      "id": "degu_walk_cream",
+      "path": "sprites/degu_walk_cream.png",
+      "source": "source/imagegen-walk-cream-v2.png",
+      "pose": "walk",
+      "coat": "cream",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk_cream.png",
+        "48": "sprites/48/degu_walk_cream.png",
+        "64": "sprites/64/degu_walk_cream.png",
+        "96": "sprites/96/degu_walk_cream.png"
+      }
+    },
+    {
+      "id": "degu_walk_white",
+      "path": "sprites/degu_walk_white.png",
+      "source": "source/imagegen-walk-white-v2.png",
+      "pose": "walk",
+      "coat": "white",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk_white.png",
+        "48": "sprites/48/degu_walk_white.png",
+        "64": "sprites/64/degu_walk_white.png",
+        "96": "sprites/96/degu_walk_white.png"
+      }
+    },
+    {
+      "id": "degu_walk_pied",
+      "path": "sprites/degu_walk_pied.png",
+      "source": "source/imagegen-walk-pied-v2.png",
+      "pose": "walk",
+      "coat": "pied",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk_pied.png",
+        "48": "sprites/48/degu_walk_pied.png",
+        "64": "sprites/64/degu_walk_pied.png",
+        "96": "sprites/96/degu_walk_pied.png"
+      }
+    },
+    {
+      "id": "degu_walk2_agouti",
+      "path": "sprites/degu_walk2_agouti.png",
+      "source": "source/imagegen-walk2-agouti-v1.png",
+      "pose": "walk2",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk2_agouti.png",
+        "48": "sprites/48/degu_walk2_agouti.png",
+        "64": "sprites/64/degu_walk2_agouti.png",
+        "96": "sprites/96/degu_walk2_agouti.png"
+      }
+    },
+    {
+      "id": "degu_walk2_gray",
+      "path": "sprites/degu_walk2_gray.png",
+      "source": "source/imagegen-walk2-gray-v1.png",
+      "pose": "walk2",
+      "coat": "gray",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk2_gray.png",
+        "48": "sprites/48/degu_walk2_gray.png",
+        "64": "sprites/64/degu_walk2_gray.png",
+        "96": "sprites/96/degu_walk2_gray.png"
+      }
+    },
+    {
+      "id": "degu_walk2_dark",
+      "path": "sprites/degu_walk2_dark.png",
+      "source": "source/imagegen-walk2-dark-v1.png",
+      "pose": "walk2",
+      "coat": "dark",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk2_dark.png",
+        "48": "sprites/48/degu_walk2_dark.png",
+        "64": "sprites/64/degu_walk2_dark.png",
+        "96": "sprites/96/degu_walk2_dark.png"
+      }
+    },
+    {
+      "id": "degu_walk2_cream",
+      "path": "sprites/degu_walk2_cream.png",
+      "source": "source/imagegen-walk2-cream-v1.png",
+      "pose": "walk2",
+      "coat": "cream",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk2_cream.png",
+        "48": "sprites/48/degu_walk2_cream.png",
+        "64": "sprites/64/degu_walk2_cream.png",
+        "96": "sprites/96/degu_walk2_cream.png"
+      }
+    },
+    {
+      "id": "degu_walk2_white",
+      "path": "sprites/degu_walk2_white.png",
+      "source": "source/imagegen-walk2-white-v1.png",
+      "pose": "walk2",
+      "coat": "white",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk2_white.png",
+        "48": "sprites/48/degu_walk2_white.png",
+        "64": "sprites/64/degu_walk2_white.png",
+        "96": "sprites/96/degu_walk2_white.png"
+      }
+    },
+    {
+      "id": "degu_walk2_pied",
+      "path": "sprites/degu_walk2_pied.png",
+      "source": "source/imagegen-walk2-pied-v1.png",
+      "pose": "walk2",
+      "coat": "pied",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_walk2_pied.png",
+        "48": "sprites/48/degu_walk2_pied.png",
+        "64": "sprites/64/degu_walk2_pied.png",
+        "96": "sprites/96/degu_walk2_pied.png"
+      }
+    },
+    {
+      "id": "degu_run_agouti",
+      "path": "sprites/degu_run_agouti.png",
+      "source": "source/imagegen-run-agouti-v3.png",
+      "pose": "run",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_run_agouti.png",
+        "48": "sprites/48/degu_run_agouti.png",
+        "64": "sprites/64/degu_run_agouti.png",
+        "96": "sprites/96/degu_run_agouti.png"
+      }
+    },
+    {
+      "id": "degu_run_gray",
+      "path": "sprites/degu_run_gray.png",
+      "source": "source/imagegen-run-gray-v2.png",
+      "pose": "run",
+      "coat": "gray",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_run_gray.png",
+        "48": "sprites/48/degu_run_gray.png",
+        "64": "sprites/64/degu_run_gray.png",
+        "96": "sprites/96/degu_run_gray.png"
+      }
+    },
+    {
+      "id": "degu_run_dark",
+      "path": "sprites/degu_run_dark.png",
+      "source": "source/imagegen-run-dark-v2.png",
+      "pose": "run",
+      "coat": "dark",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_run_dark.png",
+        "48": "sprites/48/degu_run_dark.png",
+        "64": "sprites/64/degu_run_dark.png",
+        "96": "sprites/96/degu_run_dark.png"
+      }
+    },
+    {
+      "id": "degu_run_cream",
+      "path": "sprites/degu_run_cream.png",
+      "source": "source/imagegen-run-cream-v2.png",
+      "pose": "run",
+      "coat": "cream",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_run_cream.png",
+        "48": "sprites/48/degu_run_cream.png",
+        "64": "sprites/64/degu_run_cream.png",
+        "96": "sprites/96/degu_run_cream.png"
+      }
+    },
+    {
+      "id": "degu_run_white",
+      "path": "sprites/degu_run_white.png",
+      "source": "source/imagegen-run-white-v2.png",
+      "pose": "run",
+      "coat": "white",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_run_white.png",
+        "48": "sprites/48/degu_run_white.png",
+        "64": "sprites/64/degu_run_white.png",
+        "96": "sprites/96/degu_run_white.png"
+      }
+    },
+    {
+      "id": "degu_run_pied",
+      "path": "sprites/degu_run_pied.png",
+      "source": "source/imagegen-run-pied-v2.png",
+      "pose": "run",
+      "coat": "pied",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_run_pied.png",
+        "48": "sprites/48/degu_run_pied.png",
+        "64": "sprites/64/degu_run_pied.png",
+        "96": "sprites/96/degu_run_pied.png"
+      }
+    },
+    {
+      "id": "degu_return_agouti",
+      "path": "sprites/degu_return_agouti.png",
+      "source": "source/imagegen-return-agouti-v1.png",
+      "pose": "return",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_return_agouti.png",
+        "48": "sprites/48/degu_return_agouti.png",
+        "64": "sprites/64/degu_return_agouti.png",
+        "96": "sprites/96/degu_return_agouti.png"
+      }
+    },
+    {
+      "id": "degu_point_agouti",
+      "path": "sprites/degu_point_agouti.png",
+      "source": "source/imagegen-point-agouti-v2.png",
+      "pose": "point",
+      "coat": "agouti",
+      "status": "rejected",
+      "tiers": {
+        "32": "sprites/32/degu_point_agouti.png",
+        "48": "sprites/48/degu_point_agouti.png",
+        "64": "sprites/64/degu_point_agouti.png",
+        "96": "sprites/96/degu_point_agouti.png"
+      },
+      "rejection_reason": "Unnatural human-like pointing; replaced by natural sniff/inspect assist behavior."
+    },
+    {
+      "id": "degu_point_gray",
+      "path": "sprites/degu_point_gray.png",
+      "source": "source/imagegen-point-gray-v1.png",
+      "pose": "point",
+      "coat": "gray",
+      "status": "rejected",
+      "tiers": {
+        "32": "sprites/32/degu_point_gray.png",
+        "48": "sprites/48/degu_point_gray.png",
+        "64": "sprites/64/degu_point_gray.png",
+        "96": "sprites/96/degu_point_gray.png"
+      },
+      "rejection_reason": "Unnatural human-like pointing; replaced by natural sniff/inspect assist behavior."
+    },
+    {
+      "id": "degu_point_dark",
+      "path": "sprites/degu_point_dark.png",
+      "source": "source/imagegen-point-dark-v1.png",
+      "pose": "point",
+      "coat": "dark",
+      "status": "rejected",
+      "tiers": {
+        "32": "sprites/32/degu_point_dark.png",
+        "48": "sprites/48/degu_point_dark.png",
+        "64": "sprites/64/degu_point_dark.png",
+        "96": "sprites/96/degu_point_dark.png"
+      },
+      "rejection_reason": "Unnatural human-like pointing; replaced by natural sniff/inspect assist behavior."
+    },
+    {
+      "id": "degu_point_cream",
+      "path": "sprites/degu_point_cream.png",
+      "source": "source/imagegen-point-cream-v1.png",
+      "pose": "point",
+      "coat": "cream",
+      "status": "rejected",
+      "tiers": {
+        "32": "sprites/32/degu_point_cream.png",
+        "48": "sprites/48/degu_point_cream.png",
+        "64": "sprites/64/degu_point_cream.png",
+        "96": "sprites/96/degu_point_cream.png"
+      },
+      "rejection_reason": "Unnatural human-like pointing; replaced by natural sniff/inspect assist behavior."
+    },
+    {
+      "id": "degu_point_white",
+      "path": "sprites/degu_point_white.png",
+      "source": "source/imagegen-point-white-v1.png",
+      "pose": "point",
+      "coat": "white",
+      "status": "rejected",
+      "tiers": {
+        "32": "sprites/32/degu_point_white.png",
+        "48": "sprites/48/degu_point_white.png",
+        "64": "sprites/64/degu_point_white.png",
+        "96": "sprites/96/degu_point_white.png"
+      },
+      "rejection_reason": "Unnatural human-like pointing; replaced by natural sniff/inspect assist behavior."
+    },
+    {
+      "id": "degu_point_pied",
+      "path": "sprites/degu_point_pied.png",
+      "source": "source/imagegen-point-pied-v1.png",
+      "pose": "point",
+      "coat": "pied",
+      "status": "rejected",
+      "tiers": {
+        "32": "sprites/32/degu_point_pied.png",
+        "48": "sprites/48/degu_point_pied.png",
+        "64": "sprites/64/degu_point_pied.png",
+        "96": "sprites/96/degu_point_pied.png"
+      },
+      "rejection_reason": "Unnatural human-like pointing; replaced by natural sniff/inspect assist behavior."
+    },
+    {
+      "id": "degu_guard_agouti",
+      "path": "sprites/degu_guard_agouti.png",
+      "source": "source/imagegen-guard-agouti-v2.png",
+      "pose": "guard",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_guard_agouti.png",
+        "48": "sprites/48/degu_guard_agouti.png",
+        "64": "sprites/64/degu_guard_agouti.png",
+        "96": "sprites/96/degu_guard_agouti.png"
+      }
+    },
+    {
+      "id": "degu_front_agouti",
+      "path": "sprites/degu_front_agouti.png",
+      "source": "source/style-reference-v1-front-agouti.png",
+      "pose": "front",
+      "coat": "agouti",
+      "status": "candidate",
+      "tiers": {
+        "32": "sprites/32/degu_front_agouti.png",
+        "48": "sprites/48/degu_front_agouti.png",
+        "64": "sprites/64/degu_front_agouti.png",
+        "96": "sprites/96/degu_front_agouti.png"
+      }
+    },
+    {
+      "id": "degu_sleepy_agouti",
+      "path": "sprites/degu_sleepy_agouti.png",
+      "source": "source/imagegen-sleepy-agouti-v3.png",
+      "pose": "sleepy",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sleepy_agouti.png",
+        "48": "sprites/48/degu_sleepy_agouti.png",
+        "64": "sprites/64/degu_sleepy_agouti.png",
+        "96": "sprites/96/degu_sleepy_agouti.png"
+      }
+    },
+    {
+      "id": "degu_sniff_agouti",
+      "path": "sprites/degu_sniff_agouti.png",
+      "source": "source/imagegen-sniff-agouti-v4.png",
+      "pose": "sniff",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sniff_agouti.png",
+        "48": "sprites/48/degu_sniff_agouti.png",
+        "64": "sprites/64/degu_sniff_agouti.png",
+        "96": "sprites/96/degu_sniff_agouti.png"
+      }
+    },
+    {
+      "id": "degu_sniff_gray",
+      "path": "sprites/degu_sniff_gray.png",
+      "source": "source/imagegen-sniff-gray-v1.png",
+      "pose": "sniff",
+      "coat": "gray",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sniff_gray.png",
+        "48": "sprites/48/degu_sniff_gray.png",
+        "64": "sprites/64/degu_sniff_gray.png",
+        "96": "sprites/96/degu_sniff_gray.png"
+      }
+    },
+    {
+      "id": "degu_sniff_dark",
+      "path": "sprites/degu_sniff_dark.png",
+      "source": "source/imagegen-sniff-dark-v1.png",
+      "pose": "sniff",
+      "coat": "dark",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sniff_dark.png",
+        "48": "sprites/48/degu_sniff_dark.png",
+        "64": "sprites/64/degu_sniff_dark.png",
+        "96": "sprites/96/degu_sniff_dark.png"
+      }
+    },
+    {
+      "id": "degu_sniff_cream",
+      "path": "sprites/degu_sniff_cream.png",
+      "source": "source/imagegen-sniff-cream-v1.png",
+      "pose": "sniff",
+      "coat": "cream",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sniff_cream.png",
+        "48": "sprites/48/degu_sniff_cream.png",
+        "64": "sprites/64/degu_sniff_cream.png",
+        "96": "sprites/96/degu_sniff_cream.png"
+      }
+    },
+    {
+      "id": "degu_sniff_white",
+      "path": "sprites/degu_sniff_white.png",
+      "source": "source/imagegen-sniff-white-v2.png",
+      "pose": "sniff",
+      "coat": "white",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sniff_white.png",
+        "48": "sprites/48/degu_sniff_white.png",
+        "64": "sprites/64/degu_sniff_white.png",
+        "96": "sprites/96/degu_sniff_white.png"
+      }
+    },
+    {
+      "id": "degu_sniff_pied",
+      "path": "sprites/degu_sniff_pied.png",
+      "source": "source/imagegen-sniff-pied-v2.png",
+      "pose": "sniff",
+      "coat": "pied",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_sniff_pied.png",
+        "48": "sprites/48/degu_sniff_pied.png",
+        "64": "sprites/64/degu_sniff_pied.png",
+        "96": "sprites/96/degu_sniff_pied.png"
+      }
+    },
+    {
+      "id": "degu_groom_agouti",
+      "path": "sprites/degu_groom_agouti.png",
+      "source": "source/imagegen-groom-agouti-v2.png",
+      "pose": "groom",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_groom_agouti.png",
+        "48": "sprites/48/degu_groom_agouti.png",
+        "64": "sprites/64/degu_groom_agouti.png",
+        "96": "sprites/96/degu_groom_agouti.png"
+      }
+    },
+    {
+      "id": "degu_dig_agouti",
+      "path": "sprites/degu_dig_agouti.png",
+      "source": "source/imagegen-dig-agouti-v3.png",
+      "pose": "dig",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_dig_agouti.png",
+        "48": "sprites/48/degu_dig_agouti.png",
+        "64": "sprites/64/degu_dig_agouti.png",
+        "96": "sprites/96/degu_dig_agouti.png"
+      }
+    },
+    {
+      "id": "degu_roll_agouti",
+      "path": "sprites/degu_roll_agouti.png",
+      "source": "source/imagegen-roll-agouti-v3.png",
+      "pose": "roll",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_roll_agouti.png",
+        "48": "sprites/48/degu_roll_agouti.png",
+        "64": "sprites/64/degu_roll_agouti.png",
+        "96": "sprites/96/degu_roll_agouti.png"
+      }
+    },
+    {
+      "id": "degu_nibble_agouti",
+      "path": "sprites/degu_nibble_agouti.png",
+      "source": "source/imagegen-nibble-agouti-v2.png",
+      "pose": "nibble",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_nibble_agouti.png",
+        "48": "sprites/48/degu_nibble_agouti.png",
+        "64": "sprites/64/degu_nibble_agouti.png",
+        "96": "sprites/96/degu_nibble_agouti.png"
+      }
+    },
+    {
+      "id": "degu_patpat_agouti",
+      "path": "sprites/degu_patpat_agouti.png",
+      "source": "source/imagegen-candidate-patpat-v1.png",
+      "pose": "patpat",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_patpat_agouti.png",
+        "48": "sprites/48/degu_patpat_agouti.png",
+        "64": "sprites/64/degu_patpat_agouti.png",
+        "96": "sprites/96/degu_patpat_agouti.png"
+      }
+    },
+    {
+      "id": "degu_alert_agouti",
+      "path": "sprites/degu_alert_agouti.png",
+      "source": "source/style-reference-v1-alert-agouti.png",
+      "pose": "alert",
+      "coat": "agouti",
+      "status": "candidate",
+      "tiers": {
+        "32": "sprites/32/degu_alert_agouti.png",
+        "48": "sprites/48/degu_alert_agouti.png",
+        "64": "sprites/64/degu_alert_agouti.png",
+        "96": "sprites/96/degu_alert_agouti.png"
+      }
+    },
+    {
+      "id": "degu_idle_gray",
+      "path": "sprites/degu_idle_gray.png",
+      "source": "source/imagegen-idle-gray-v2.png",
+      "pose": "idle",
+      "coat": "gray",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_idle_gray.png",
+        "48": "sprites/48/degu_idle_gray.png",
+        "64": "sprites/64/degu_idle_gray.png",
+        "96": "sprites/96/degu_idle_gray.png"
+      }
+    },
+    {
+      "id": "degu_idle_dark",
+      "path": "sprites/degu_idle_dark.png",
+      "source": "source/imagegen-idle-dark-v2.png",
+      "pose": "idle",
+      "coat": "dark",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_idle_dark.png",
+        "48": "sprites/48/degu_idle_dark.png",
+        "64": "sprites/64/degu_idle_dark.png",
+        "96": "sprites/96/degu_idle_dark.png"
+      }
+    },
+    {
+      "id": "degu_idle_cream",
+      "path": "sprites/degu_idle_cream.png",
+      "source": "source/imagegen-idle-cream-v2.png",
+      "pose": "idle",
+      "coat": "cream",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_idle_cream.png",
+        "48": "sprites/48/degu_idle_cream.png",
+        "64": "sprites/64/degu_idle_cream.png",
+        "96": "sprites/96/degu_idle_cream.png"
+      }
+    },
+    {
+      "id": "degu_idle_white",
+      "path": "sprites/degu_idle_white.png",
+      "source": "source/imagegen-idle-white-v2.png",
+      "pose": "idle",
+      "coat": "white",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_idle_white.png",
+        "48": "sprites/48/degu_idle_white.png",
+        "64": "sprites/64/degu_idle_white.png",
+        "96": "sprites/96/degu_idle_white.png"
+      }
+    },
+    {
+      "id": "degu_idle_pied",
+      "path": "sprites/degu_idle_pied.png",
+      "source": "source/imagegen-idle-pied-v2.png",
+      "pose": "idle",
+      "coat": "pied",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/degu_idle_pied.png",
+        "48": "sprites/48/degu_idle_pied.png",
+        "64": "sprites/64/degu_idle_pied.png",
+        "96": "sprites/96/degu_idle_pied.png"
+      }
+    },
+    {
+      "id": "mofumouse_cursor_companion_icon",
+      "path": "sprites/mofumouse_cursor_companion_icon.png",
+      "source": "source/imagegen-cursor-companion-icon-v1.png",
+      "pose": "icon",
+      "coat": "agouti",
+      "status": "runtime",
+      "tiers": {
+        "32": "sprites/32/mofumouse_cursor_companion_icon.png",
+        "48": "sprites/48/mofumouse_cursor_companion_icon.png",
+        "64": "sprites/64/mofumouse_cursor_companion_icon.png",
+        "96": "sprites/96/mofumouse_cursor_companion_icon.png"
+      }
+    }
+  ],
+  "runtime_sizes": [
+    32,
+    48,
+    64,
+    96
+  ]
+}

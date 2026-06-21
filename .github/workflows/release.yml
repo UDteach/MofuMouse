@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Test
+        shell: pwsh
+        run: go test -buildvcs=false ./...
+      - name: Build x86/x64
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $version = "${{ github.ref_name }}"
+          if ($version -eq "") { $version = "manual" }
+          $env:GOOS = "windows"
+          $env:GOARCH = "amd64"
+          go build -buildvcs=false -ldflags="-H=windowsgui -s -w -X main.appVersion=$version" -o dist\MofuMouse.exe ./cmd/mofumouse
+          Compress-Archive -Path dist\MofuMouse.exe,README.md -DestinationPath dist\MofuMouse-windows-x64.zip -Force
+          Remove-Item dist\MofuMouse.exe -Force
+          $env:GOARCH = "386"
+          go build -buildvcs=false -ldflags="-H=windowsgui -s -w -X main.appVersion=$version" -o dist\MofuMouse.exe ./cmd/mofumouse
+          Compress-Archive -Path dist\MofuMouse.exe,README.md -DestinationPath dist\MofuMouse-windows-x86.zip -Force
+          Remove-Item dist\MofuMouse.exe -Force
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/MofuMouse-windows-x64.zip
+            dist/MofuMouse-windows-x86.zip
+

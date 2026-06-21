@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MofuMouse</title>
+    <meta
+      name="description"
+      content="MofuMouse は、カーソル横でデグーが手伝う Windows 用デスクトップアシスタントです。"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #20251f;
+        --muted: #5c665f;
+        --paper: #f8f8f3;
+        --surface: #fffdf7;
+        --line: #d8d8ce;
+        --leaf: #3e6f52;
+        --leaf-dark: #2f573f;
+        --slate: #63788a;
+        --gold: #b9852d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "Yu Gothic UI", system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+
+      main {
+        width: min(1040px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 36px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 48px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        font-weight: 700;
+      }
+
+      .navlinks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .navlinks a {
+        color: var(--muted);
+        font-size: 14px;
+        text-decoration: none;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 420px);
+        gap: 42px;
+        align-items: center;
+        min-height: min(680px, calc(100vh - 92px));
+        padding: 34px 0;
+      }
+
+      header > div,
+      .preview-wrap {
+        min-width: 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(42px, 8vw, 82px);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 660px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        max-width: 100%;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border: 1px solid var(--ink);
+        background: var(--surface);
+        font-weight: 650;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .button.primary {
+        color: #fff;
+        border-color: var(--leaf);
+        background: var(--leaf);
+      }
+
+      .button.primary:hover {
+        background: var(--leaf-dark);
+      }
+
+      .download-note {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .release-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .release-meta span {
+        display: inline-flex;
+        max-width: 100%;
+        min-height: 28px;
+        align-items: center;
+        gap: 6px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        background: rgba(255, 253, 247, 0.72);
+      }
+
+      .release-meta strong {
+        color: var(--ink);
+        font-weight: 650;
+      }
+
+      .preview-wrap {
+        display: grid;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .preview {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        background: #fff;
+        box-shadow: 0 18px 50px rgba(42, 49, 43, 0.1);
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+        border-top: 1px solid var(--line);
+        padding-top: 26px;
+      }
+
+      .features article {
+        border-top: 3px solid var(--gold);
+        padding-top: 14px;
+      }
+
+      .features article:nth-child(2) {
+        border-color: var(--slate);
+      }
+
+      .features article:nth-child(3) {
+        border-color: var(--leaf);
+      }
+
+      h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      article p,
+      .english p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .english {
+        margin-top: 28px;
+        border-top: 1px solid var(--line);
+        padding-top: 22px;
+      }
+
+      .english h2 {
+        margin-bottom: 10px;
+      }
+
+      @media (max-width: 760px) {
+        nav {
+          align-items: flex-start;
+          flex-direction: column;
+          padding-bottom: 12px;
+        }
+
+        header,
+        .features {
+          grid-template-columns: 1fr;
+        }
+
+        header {
+          min-height: auto;
+          padding: 34px 0 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <div class="brand">MofuMouse</div>
+        <div class="navlinks">
+          <a href="#download">ダウンロード</a>
+          <a href="#features">機能</a>
+          <a href="#english">English</a>
+          <a href="https://github.com/UDteach/MofuMouse">GitHub</a>
+        </div>
+      </nav>
+
+      <header>
+        <div>
+          <h1>MofuMouse</h1>
+          <p class="lead">
+            カーソルの横に小さなデグーがついてきて、歩行フレームや待機しぐさで作業中にそっと動く Windows 用デスクトップアシスタントです。
+            ボタン操作やカーソル移動はせず、1px 移動だけを必要な時に使えます。
+          </p>
+          <div id="download" class="actions">
+            <a class="button primary" href="download/MofuMouse-windows-x64.zip">Windows版 x64</a>
+            <a class="button" href="download/MofuMouse-windows-x86.zip">Windows版 x86</a>
+            <a class="button" href="https://github.com/UDteach/MofuMouse/releases/latest">最新版リリース</a>
+          </div>
+          <p class="download-note">
+            多くのPCでは x64 を選んでください。古い32bit Windows の場合だけ x86 を使います。
+            ZIPを展開して `MofuMouse.exe` を起動します。
+          </p>
+          <div class="release-meta" aria-label="Build information">
+            <span>最新版 <strong data-release-version>v0.1.0</strong></span>
+            <span>バージョン <strong data-build-version>dev-local</strong></span>
+            <span>更新日 <strong data-build-date>2026-06-21</strong></span>
+            <span>コミット <strong data-build-commit>local</strong></span>
+          </div>
+        </div>
+
+        <div class="preview-wrap">
+          <img class="preview" src="assets/mofumouse-preview.png" alt="MofuMouse preview" />
+          <p class="note">
+            画像は開発中の見た目です。デグーの歩行フレームや毛色別のしぐさは順次追加しています。
+          </p>
+        </div>
+      </header>
+
+      <section id="features" class="features" aria-label="Features">
+        <article>
+          <h2>カーソル横で追従</h2>
+          <p>移動方向に合わせて左右へ回り込み、邪魔になりにくい位置で小さく待機します。</p>
+        </article>
+        <article>
+          <h2>歩いてついてくる</h2>
+          <p>全6毛色の walk / walk2 / run フレームで、カーソル移動中の足運びを見せます。</p>
+        </article>
+        <article>
+          <h2>作業中の小さな補助</h2>
+          <p>1px移動、クイックキー、クイックスクロール、起動時開始をトレイから切り替えられます。</p>
+        </article>
+      </section>
+
+      <section id="english" class="english" lang="en">
+        <h2>English</h2>
+        <p>
+          MofuMouse is a small Windows desktop assistant with a degu companion beside your cursor.
+          It focuses on cursor-side walking animation, small idle gestures, optional 1px mouse movement, and tray-based shortcuts without moving the cursor to buttons or auto-clicking.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
