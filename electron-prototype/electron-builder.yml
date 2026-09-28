@@ -1,0 +1,35 @@
+appId: com.kdevelopk.mofumouse.electron.prototype
+productName: MofuMouse
+artifactName: MofuMouse-${version}-${os}-${arch}.${ext}
+directories:
+  output: release-build
+files:
+  - app/**/*
+  - package.json
+asar: true
+publish: null
+win:
+  icon: build/app.ico
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: zip
+      arch: [x64]
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+mac:
+  category: public.app-category.entertainment
+  icon: build/app.icns
+  identity: '-'
+  hardenedRuntime: true
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  minimumSystemVersion: '13.0'
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]

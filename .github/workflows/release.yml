@@ -1,54 +1,116 @@
-name: Release
-
+name: Preview apps and website
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
-
+    inputs:
+      tag:
+        description: Exact preview tag matching electron-prototype/package.json
+        required: true
+        default: v0.1.0-preview.1
+        type: string
 permissions:
-  contents: write
-
+  contents: read
+concurrency:
+  group: mofumouse-preview-release
+  cancel-in-progress: false
 jobs:
-  windows:
-    runs-on: windows-latest
+  build:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            platform: win32
+          - os: macos-15
+            platform: darwin
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: electron-prototype
+    env:
+      EXPECTED_TAG: ${{ inputs.tag }}
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '24'
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - name: Build frontend
-        working-directory: frontend
-        shell: pwsh
+          cache-dependency-path: electron-prototype/package-lock.json
+      - name: Verify preview version
+        run: node -e "const p=require('./package.json');if(!/^v\d+\.\d+\.\d+-preview\.\d+$/.test(process.env.EXPECTED_TAG)||process.env.EXPECTED_TAG!=='v'+p.version)throw Error('Preview version mismatch')"
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+      - name: Windows installer and portable ZIP
+        if: runner.os == 'Windows'
+        run: npm run dist:win
+      - name: Mac Apple Silicon and Intel DMG/ZIP
+        if: runner.os == 'macOS'
+        run: npm run dist:mac
+      - name: Verify Mac architectures, minimum OS, signatures and native executable
+        if: runner.os == 'macOS'
+        shell: bash
         run: |
-          npm ci
-          npm run build
-      - name: Test
-        shell: pwsh
-        run: go test -buildvcs=false ./...
-      - name: Build x86/x64
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force dist | Out-Null
-          $version = "${{ github.ref_name }}"
-          if ($version -eq "") { $version = "manual" }
-          $env:GOOS = "windows"
-          $env:GOARCH = "amd64"
-          go build -buildvcs=false -ldflags="-H=windowsgui -s -w -X main.appVersion=$version" -o dist\MofuMouse.exe ./cmd/mofumouse
-          Compress-Archive -Path dist\MofuMouse.exe,README.md -DestinationPath dist\MofuMouse-windows-x64.zip -Force
-          Remove-Item dist\MofuMouse.exe -Force
-          $env:GOARCH = "386"
-          go build -buildvcs=false -ldflags="-H=windowsgui -s -w -X main.appVersion=$version" -o dist\MofuMouse.exe ./cmd/mofumouse
-          Compress-Archive -Path dist\MofuMouse.exe,README.md -DestinationPath dist\MofuMouse-windows-x86.zip -Force
-          Remove-Item dist\MofuMouse.exe -Force
-      - name: Publish release
-        uses: softprops/action-gh-release@v2
+          count=0
+          while IFS= read -r -d '' app; do
+            expected_arch=x86_64
+            case "$app" in release-build/mac-arm64/*) expected_arch=arm64 ;; esac
+            test "$(lipo -archs "$app/Contents/MacOS/MofuMouse")" = "$expected_arch"
+            test "$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$app/Contents/Info.plist")" = 13.0
+            codesign --verify --deep --strict "$app"
+            count=$((count + 1))
+          done < <(find release-build -maxdepth 2 -name '*.app' -print0)
+          test "$count" -eq 2
+          arch="$(node -p process.arch)"
+          appdir=mac
+          if [ "$arch" = arm64 ]; then appdir=mac-arm64; fi
+          ELECTRON_RUN_AS_NODE=1 "release-build/$appdir/MofuMouse.app/Contents/MacOS/MofuMouse" -e "if(process.versions.electron!=='44.4.5')process.exit(1)"
+      - name: Verify packed source, image hashes and output names
+        run: node scripts/verify-release-build.mjs
+      - uses: actions/upload-artifact@v4
         with:
-          files: |
-            dist/MofuMouse-windows-x64.zip
-            dist/MofuMouse-windows-x86.zip
+          name: preview-${{ matrix.platform }}
+          path: |
+            electron-prototype/release-build/*.exe
+            electron-prototype/release-build/*.zip
+            electron-prototype/release-build/*.dmg
+            electron-prototype/release-build/build-info-*.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: preview-*
+          merge-multiple: true
+          path: release-assets
+      - name: Prepare and verify public page
+        run: |
+          node scripts/verify_preview_page.mjs
+          node scripts/stage-preview-site.mjs
+      - name: Verify all six downloads and publish preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_TAG: ${{ inputs.tag }}
+        run: node scripts/publish-preview.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .site
+      - id: deployment
+        uses: actions/deploy-pages@v4

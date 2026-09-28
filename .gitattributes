@@ -1,0 +1,6 @@
+electron-prototype/app/media/manifest.json text eol=lf
+electron-prototype/catalog-snapshot.json text eol=lf
+*.command text eol=lf
+*.png binary
+*.ico binary
+*.icns binary

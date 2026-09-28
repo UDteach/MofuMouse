@@ -7,6 +7,8 @@
 /.research/
 /build/
 /dist/
+/.site/
+/release-assets/
 /docs/download/
 /node_modules/
 /frontend/node_modules/

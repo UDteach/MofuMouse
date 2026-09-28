@@ -1,0 +1,152 @@
+{
+  "snapshotAt": "2026-09-28T13:35:23.853854+00:00",
+  "inputs": [
+    {
+      "path": "assets/manifest/animal-cursor-ten-species.json",
+      "sha256": "0147b85784e6d937fbeb5bb8fe221b5ced16d9a7cdc444aadce707f912a328a0"
+    },
+    {
+      "path": "assets/manifest/animal-cursor-coat-ten-species.json",
+      "sha256": "e0cbce961e12e30d513d565a360c1a07536c88ee2aa358070e110ed38b211594"
+    }
+  ],
+  "species": 10,
+  "variants": [
+    {
+      "id": "degu-agouti",
+      "label": "デグー / アグーチ",
+      "walkFrames": 30,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "chinchilla-standard_gray",
+      "label": "チンチラ / スタンダードグレー",
+      "walkFrames": 22,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "hamster-golden_syrian",
+      "label": "ハムスター / ゴールデン",
+      "walkFrames": 24,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "guinea_pig-golden",
+      "label": "モルモット / ゴールデン",
+      "walkFrames": 27,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "macaroni_mouse-tan",
+      "label": "マカロニマウス / タン",
+      "walkFrames": 18,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "rabbit-ruby_eyed_white",
+      "label": "ウサギ / ルビーアイホワイト",
+      "walkFrames": 24,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "hedgehog-salt_pepper",
+      "label": "ハリネズミ / ソルト＆ペッパー",
+      "walkFrames": 24,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "ferret-sable",
+      "label": "フェレット / セーブル",
+      "walkFrames": 24,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "chipmunk-striped",
+      "label": "シマリス / ノーマル",
+      "walkFrames": 24,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "fancy_mouse-white_black_eyed",
+      "label": "ファンシーマウス / ブラックアイホワイト",
+      "walkFrames": 20,
+      "idleFrames": 96,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-blue",
+      "label": "デグー / ブルー",
+      "walkFrames": 8,
+      "idleFrames": 1,
+      "idleFallback": true
+    },
+    {
+      "id": "degu-sand",
+      "label": "デグー / サンド",
+      "walkFrames": 8,
+      "idleFrames": 1,
+      "idleFallback": true
+    },
+    {
+      "id": "chinchilla-beige",
+      "label": "チンチラ / ベージュ",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "chinchilla-ebony",
+      "label": "チンチラ / エボニー",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "hamster-cream",
+      "label": "ハムスター / クリーム",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "hamster-black",
+      "label": "ハムスター / ブラック",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "hamster-sable",
+      "label": "ハムスター / セーブル",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "hamster-cinnamon",
+      "label": "ハムスター / シナモン",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "hamster-dove",
+      "label": "ハムスター / ダヴ",
+      "walkFrames": 8,
+      "idleFrames": 8,
+      "idleFallback": false
+    }
+  ],
+  "images": 2650,
+  "manifestSha256": "27ed64dd3e47c966fef2920e5bc7744a16dc5645d7ae78ca505dadc2f8dce3a2",
+  "presentation": "per-motion body/ground alignment; source-frame variation is not hidden"
+}
