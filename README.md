@@ -2,6 +2,8 @@
 
 写真風の小動物がマウスカーソルについてくる、Windows／Mac向けの先行版です。
 
+作者：[kdevelopk（X）](https://x.com/kdevelopk) · [ほかの作品](https://kdevelopk.pages.dev/)
+
 [Webでおためし](https://udteach.github.io/MofuMouse/try/) · [ダウンロードと使い方](https://udteach.github.io/MofuMouse/download.html) · [v0.1.0-preview.2](https://github.com/UDteach/MofuMouse/releases/tag/v0.1.0-preview.2)
 
 ![10種の表示例](docs/assets/mofumouse-preview-ten-animals.png)
