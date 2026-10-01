@@ -13,9 +13,21 @@ public static class MofuNativeQA {
   [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
 }
 '@
-$data = Get-Content -LiteralPath $Probe -Encoding UTF8 -Raw | ConvertFrom-Json
-$window = [IntPtr]([long]$data.nativeHandle)
-if (-not [MofuNativeQA]::IsWindow($window)) { throw 'The tested window no longer exists.' }
+$probeDeadline = (Get-Date).AddSeconds(5)
+$probeRetries = 0
+do {
+  $window = [IntPtr]::Zero
+  try {
+    $data = Get-Content -LiteralPath $Probe -Encoding UTF8 -Raw -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+    $window = [IntPtr]([long]$data.nativeHandle)
+  } catch {
+    # A display rebuild removes the retired probe before the replacement paints.
+  }
+  if ([MofuNativeQA]::IsWindow($window)) { break }
+  if ((Get-Date) -ge $probeDeadline) { throw 'No live tested window was available within five seconds.' }
+  $probeRetries++
+  Start-Sleep -Milliseconds 100
+} while ($true)
 $style = [MofuNativeQA]::GetWindowLong($window, -20)
 $point = New-Object MofuNativeQA+Point
 $point.X = $data.point.x; $point.Y = $data.point.y
@@ -33,7 +45,7 @@ $checks = [ordered]@{
   underlyingWindowReceivesHit = $under -ne [IntPtr]::Zero -and $underProcess -ne $data.processId
   foregroundBelongsToOtherApp = $foregroundProcess -ne $data.processId
 }
-$result = [ordered]@{ checkedAt = (Get-Date).ToUniversalTime().ToString('o'); processId = $data.processId; nativeHandle = $data.nativeHandle; extendedStyle = ('0x{0:X8}' -f $style); point = $data.point; checks = $checks; pass = -not ($checks.Values -contains $false) }
+$result = [ordered]@{ checkedAt = (Get-Date).ToUniversalTime().ToString('o'); processId = $data.processId; nativeHandle = $data.nativeHandle; probeRetries = $probeRetries; extendedStyle = ('0x{0:X8}' -f $style); point = $data.point; checks = $checks; pass = -not ($checks.Values -contains $false) }
 $json = $result | ConvertTo-Json -Depth 6
 [IO.File]::WriteAllText($Output, $json + "`n", [Text.UTF8Encoding]::new($false))
 $json

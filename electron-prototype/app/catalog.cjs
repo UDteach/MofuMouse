@@ -6,7 +6,7 @@ function verifyCatalog(data, readFile) {
   if (data.schema !== 2 || !data.variants?.length || !data.files?.length) throw new Error('Invalid animal catalog');
   const ids = new Set(), files = new Map();
   for (const file of data.files) {
-    if (!/^[a-z0-9_-]+\/(walk|idle)\/(64|96)-\d{3}\.png$/.test(file.path) || files.has(file.path)) throw new Error('Invalid or duplicate image path');
+    if (!/^[a-z0-9_-]+\/(walk|idle)\/(64|96)-\d{3,}\.png$/.test(file.path) || files.has(file.path)) throw new Error('Invalid or duplicate image path');
     if (hash(readFile(file.path)) !== file.sha256) throw new Error(`Image changed: ${file.path}`);
     files.set(file.path, file);
   }

@@ -1,12 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const version = JSON.parse(fs.readFileSync('electron-prototype/package.json', 'utf8')).version;
-const page = fs.readFileSync('docs/index.html', 'utf8');
+const page = fs.readFileSync('docs/index.html', 'utf8') + fs.readFileSync('docs/download.html', 'utf8');
 if (!page.includes(`releases/download/v${version}/`) || page.includes('download/MofuMouse-windows-x86.zip')) throw new Error('Page release links are stale');
 const local = [...page.matchAll(/(?:src|href)="(assets\/[^"#?]+)"/g)].map(m => m[1]);
 for (const asset of local) if (!fs.existsSync(path.join('docs', asset))) throw new Error(`Missing page asset: ${asset}`);
 fs.mkdirSync('.site', { recursive: true });
 fs.copyFileSync('docs/index.html', '.site/index.html');
+fs.copyFileSync('docs/download.html', '.site/download.html');
 fs.cpSync('docs/assets', '.site/assets', { recursive: true });
+fs.cpSync('docs/try', '.site/try', { recursive: true });
 fs.writeFileSync('.site/.nojekyll', '', 'utf8');
 console.log(JSON.stringify({ version, assets: local.length, site: '.site', internalDocsExcluded: true }));

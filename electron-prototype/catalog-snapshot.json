@@ -1,5 +1,5 @@
 {
-  "snapshotAt": "2026-09-28T13:35:23.853854+00:00",
+  "snapshotAt": "2026-10-01T09:36:38.010286+00:00",
   "inputs": [
     {
       "path": "assets/manifest/animal-cursor-ten-species.json",
@@ -8,6 +8,96 @@
     {
       "path": "assets/manifest/animal-cursor-coat-ten-species.json",
       "sha256": "e0cbce961e12e30d513d565a360c1a07536c88ee2aa358070e110ed38b211594"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/guinea_pig/walk-v3/manifest.json",
+      "sha256": "897a2504a365935d1f330b1103e5222c64404fc922baad76ae4e539a18f60ba7",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/rabbit/walk-v2/manifest.json",
+      "sha256": "96e6051b6b7003e4f5f21e8bae2f3b25312d238524342bf6f0496973363f0ea6",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/ferret/walk-v3/manifest.json",
+      "sha256": "f7c7d3f2c7177a4cb5bc301a62a50767a581409e343d808063c2e05078c418bc",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/chinchilla/walk-v3/manifest.json",
+      "sha256": "9a4c2389eae3f53c5e59a154be00bfa9c3c2b12b52ea6ca1519667818561eb7a",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/hamster/walk-v2/manifest.json",
+      "sha256": "a340cc98ea577d1b53e8caad2c092d56447398be3de6118adcf9225127c83095",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/chipmunk/walk-v3/manifest.json",
+      "sha256": "0c332027f252bc258721a70ddcc01714dd7e02c31c7ef60a3a72b7e42263e6df",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/fancy_mouse/walk-v3/manifest.json",
+      "sha256": "0e307301c34e0a9e53242cea8e8aacac020b110c11edb9ba01b3ecc98bd5b4e1",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": "assets/preview/animal-cursor-v2/macaroni_mouse/walk-v5/manifest.json",
+      "sha256": "db02cfc32025d3a5de419f8a78e55a565f0e03052b3dc878d8b5539c0b8c2cc5",
+      "role": "reviewed single-motion replacement"
+    },
+    {
+      "path": ".codex/qa/degu-sand-idle-runtime-parent/receipt.replace-idle.json",
+      "sha256": "9a6379f521930b8b5ccbbc8e20d6869d1a43e1249f47e22ec25fed57ab19fc36",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/agouti_pied/receipt.reviewed.json",
+      "sha256": "e22265d7042d6a952410aa7517005f32701f16eba17eaffb20b38f301dd0954e",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/blue/receipt.reviewed.json",
+      "sha256": "f82f4817b99d6afeb92344965cd2dc4aa8ff0e5b4abc409b09aa7e379e76678f",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/white/receipt.reviewed.json",
+      "sha256": "f205be155c6427f9c72ad9720b550b1711c97eef03cc22102eff18de1ee1478d",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/blue_pied/receipt.reviewed.json",
+      "sha256": "ac7af7c91741240268bd3b7b43e5bfb80dd95b76f98d197df02ae008504aa09c",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/black_pied/receipt.reviewed.json",
+      "sha256": "f8492ef24516807a3c6ef33655161879ab3763686f07599eb7fe639fc149b6e7",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/sand_pied/receipt.reviewed.json",
+      "sha256": "cec7a1d779a8599c0a2ade4167e48fe9d1221e5ae2401792ee30f44add8d3237",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/cream_pied/receipt.reviewed.json",
+      "sha256": "edf0ddd089a3dab84d111ed5890ca7c306131f738fb066aa67eac74da2288fd1",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/degu-all-colors-20260930-ab/integration/sand/receipt.reviewed.json",
+      "sha256": "577e98d0f532c1e68dd3c932011f7d0dd0b7ce6ae0f9e641408fda1c39199dbb",
+      "role": "targeted reviewed coat integration"
+    },
+    {
+      "path": ".codex/qa/release-20261001/black-receipt.json",
+      "sha256": "9c139a34c5e3c7306e5724506683535eb5dc1770b2c35355447fbcbb97b28c7c",
+      "role": "targeted reviewed coat integration"
     }
   ],
   "species": 10,
@@ -22,35 +112,35 @@
     {
       "id": "chinchilla-standard_gray",
       "label": "チンチラ / スタンダードグレー",
-      "walkFrames": 22,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "hamster-golden_syrian",
       "label": "ハムスター / ゴールデン",
-      "walkFrames": 24,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "guinea_pig-golden",
       "label": "モルモット / ゴールデン",
-      "walkFrames": 27,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "macaroni_mouse-tan",
       "label": "マカロニマウス / タン",
-      "walkFrames": 18,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "rabbit-ruby_eyed_white",
       "label": "ウサギ / ルビーアイホワイト",
-      "walkFrames": 24,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
@@ -64,37 +154,37 @@
     {
       "id": "ferret-sable",
       "label": "フェレット / セーブル",
-      "walkFrames": 24,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "chipmunk-striped",
       "label": "シマリス / ノーマル",
-      "walkFrames": 24,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "fancy_mouse-white_black_eyed",
       "label": "ファンシーマウス / ブラックアイホワイト",
-      "walkFrames": 20,
+      "walkFrames": 30,
       "idleFrames": 96,
       "idleFallback": false
     },
     {
       "id": "degu-blue",
       "label": "デグー / ブルー",
-      "walkFrames": 8,
-      "idleFrames": 1,
-      "idleFallback": true
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
     },
     {
       "id": "degu-sand",
       "label": "デグー / サンド",
-      "walkFrames": 8,
-      "idleFrames": 1,
-      "idleFallback": true
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
     },
     {
       "id": "chinchilla-beige",
@@ -144,9 +234,58 @@
       "walkFrames": 8,
       "idleFrames": 8,
       "idleFallback": false
+    },
+    {
+      "id": "degu-agouti_pied",
+      "label": "デグー / アグーチパイド",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-white",
+      "label": "デグー / ホワイト",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-blue_pied",
+      "label": "デグー / ブルーパイド",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-black_pied",
+      "label": "デグー / ブラックパイド",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-sand_pied",
+      "label": "デグー / サンドパイド",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-cream_pied",
+      "label": "デグー / クリームパイド",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
+    },
+    {
+      "id": "degu-black",
+      "label": "デグー / ブラック",
+      "walkFrames": 30,
+      "idleFrames": 8,
+      "idleFallback": false
     }
   ],
-  "images": 2650,
-  "manifestSha256": "27ed64dd3e47c966fef2920e5bc7744a16dc5645d7ae78ca505dadc2f8dce3a2",
+  "images": 3416,
+  "manifestSha256": "fdf28eea534d653f868866ddc38473aa3c3861e0fdc633e2367d2b8382893b23",
   "presentation": "per-motion body/ground alignment; source-frame variation is not hidden"
 }

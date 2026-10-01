@@ -1,16 +1,19 @@
-# 先行版の公開
+# 更新版の公開
 
-2026-09-28のユーザー依頼により、確認済み19姿のElectron先行版を公開する。全色・全30コマの完成条件は継続中で、今回の公開を全制作完了と混同しない。
+2026-10-01のユーザー依頼で、デグー全10色・10種26姿の `v0.1.0-preview.2` を公開する。ユーザーは旧Macの対象をmacOS 12までと指定した。今回の公開は他種40色の制作完了を意味しない。
 
-以前のGo版の機能完了待ち方針と個別Pages/Releaseテンプレートは履歴。現行の実行入口は `.github/workflows/release.yml` の手動 `workflow_dispatch` だけ。mainへのpushやtagでは自動起動しない。旧 `pages.yml` は統合した。
+AnimalsDesktopForRealの実構成を確認した。Electron43.7.5、Mac最小12.0、Apple Silicon／Intel DMG・ZIP、Windows x64 NSIS・ZIP、Macアドホック署名が参照元。MofuMouseの通常版は既存Electron44.4.5／Mac最小13.0を保持し、別名 `macos12` の互換版をElectron43.7.5／Mac最小12.0で作る。同一のレビュー済み画像を使う。Mac実機・Montereyでの起動は未確認と明記する。
 
-1. 固定素材のhash、単体テスト、Windows配布物/実表示、ページのdesktop/mobile/リンクをローカル確認する。
-2. package.json / lockfile / ページ / release notesの版を合わせる。今回の版は `v0.1.0-preview.1`。
-3. mainへ変更を反映する。
-4. `gh workflow run release.yml --repo UDteach/MofuMouse --ref main -f tag=v0.1.0-preview.1` を**1回だけ**実行し、run IDを記録する。
-5. 同じrunでWindows NSIS/ZIP、Mac arm64/x64 DMG/ZIPを作り、素材と配布物hashを検証し、GitHub prereleaseと既存Pagesを更新する。公開ページへはindex.htmlとassetsだけを送る。
-6. Releaseの6配布物、SHA256SUMS、2つのbuild-infoとページのリンクを確認する。MacのCIビルド/署名整合性チェックは実機での表示・操作確認と別。
+公開入口は `.github/workflows/release.yml` の手動起動だけ。pushやtagでは自動起動しない。Actions節約のため、新しいrunはまず1回。失敗時は自動再実行せず原因と追加runの要否を報告する。
 
-ユーザーのActions節約指定により、失敗時も自動rerunや2回目dispatchをしない。ローカルで原因を特定し、追加runが必要な場合は実施せず状況を報告する。Artifacts保持は1日。公開対象は `https://udteach.github.io/MofuMouse/` とUDteach/MofuMouseの先行版のみで、作品一覧サイトを直接上書きしない。
+1. appの固定3,416PNG、27テスト、Windows配布物と実表示を確認する。
+2. `node scripts/build-web-demo.mjs`、`node scripts/verify_preview_page.mjs`、`node scripts/stage-preview-site.mjs` を実行し、desktop/mobileとデモ操作を確認する。
+3. package／lockfile／ページ／notesを同じ版へそろえ、レビュー可能なコミットをmainへ反映する。
+4. `gh workflow run release.yml --repo UDteach/MofuMouse --ref main -f tag=v0.1.0-preview.2` を1回実行してrun IDを記録する。
+5. 同じrunでWin2・Mac通常4・Mac互換4の10配布物を作る。Macは4appのCPU・最小OS・署名とホストCPUの実行環境版を確認する。`verify-release-build.mjs` は同梱ソース／画像／出力hashを検証し、通常2＋互換1の3つのbuild-infoを作る。
+6. `scripts/publish-release.mjs` が同一コミット・カタログ・枚数・実行環境・最小OS・全10ファイルを照合し、GitHub prereleaseとPagesを同じrunで更新する。SHA256SUMSは10配布物＋3reportを含む。
+7. Releaseの14添付物、Pagesのデモ・DLリンク、OS別選択、実ダウンロードを確認する。初回警告・更新・削除・不具合報告の手順を公開ページへ載せる。
 
-Mac minimumSystemVersionは13.0。採用Electron44の公式変更履歴がmacOS12非対応を明記している: https://www.electronjs.org/docs/latest/breaking-changes/ 。参照したAnimalsDesktopForRealの旧Electron43/min12設定をそのまま流用しない。
+公開ページはindex.html、download.html、assets、tryだけ。制作台帳・QA・ソース画像履歴は配信しない。GitHub上の旧releaseは残す。旧 `publish-preview.mjs` はpreview.1の履歴契約で、今回のワークフローから呼ばない。
+
+一次情報: [ElectronのOS変更](https://github.com/electron/electron/blob/main/docs/breaking-changes.md)、[サポート方針](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)、[Apple初回起動](https://support.apple.com/ja-jp/102445)。互換版の将来更新はElectron43の公式サポート状況を再確認する。古いOS対応を理由にサポート終了した実行環境へ自動で下げない。

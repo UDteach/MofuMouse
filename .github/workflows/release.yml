@@ -5,7 +5,7 @@ on:
       tag:
         description: Exact preview tag matching electron-prototype/package.json
         required: true
-        default: v0.1.0-preview.1
+        default: v0.1.0-preview.2
         type: string
 permissions:
   contents: read
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    timeout-minutes: 20
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
@@ -47,26 +47,37 @@ jobs:
       - name: Mac Apple Silicon and Intel DMG/ZIP
         if: runner.os == 'macOS'
         run: npm run dist:mac
+      - name: macOS 12 compatibility DMG/ZIP (Apple Silicon and Intel)
+        if: runner.os == 'macOS'
+        run: npm run dist:mac:monterey
       - name: Verify Mac architectures, minimum OS, signatures and native executable
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          count=0
-          while IFS= read -r -d '' app; do
-            expected_arch=x86_64
-            case "$app" in release-build/mac-arm64/*) expected_arch=arm64 ;; esac
-            test "$(lipo -archs "$app/Contents/MacOS/MofuMouse")" = "$expected_arch"
-            test "$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$app/Contents/Info.plist")" = 13.0
-            codesign --verify --deep --strict "$app"
-            count=$((count + 1))
-          done < <(find release-build -maxdepth 2 -name '*.app' -print0)
-          test "$count" -eq 2
-          arch="$(node -p process.arch)"
-          appdir=mac
-          if [ "$arch" = arm64 ]; then appdir=mac-arm64; fi
-          ELECTRON_RUN_AS_NODE=1 "release-build/$appdir/MofuMouse.app/Contents/MacOS/MofuMouse" -e "if(process.versions.electron!=='44.4.5')process.exit(1)"
+          for directory in release-build release-build-macos12; do
+            minimum=13.0
+            runtime=44.4.5
+            if [ "$directory" = release-build-macos12 ]; then minimum=12.0; runtime=43.7.5; fi
+            count=0
+            while IFS= read -r -d '' app; do
+              expected_arch=x86_64
+              case "$app" in */mac-arm64/*) expected_arch=arm64 ;; esac
+              test "$(lipo -archs "$app/Contents/MacOS/MofuMouse")" = "$expected_arch"
+              test "$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$app/Contents/Info.plist")" = "$minimum"
+              codesign --verify --deep --strict "$app"
+              count=$((count + 1))
+            done < <(find "$directory" -maxdepth 2 -name '*.app' -print0)
+            test "$count" -eq 2
+            arch="$(node -p process.arch)"
+            appdir=mac
+            if [ "$arch" = arm64 ]; then appdir=mac-arm64; fi
+            ELECTRON_RUN_AS_NODE=1 "$directory/$appdir/MofuMouse.app/Contents/MacOS/MofuMouse" -e "if(process.versions.electron!=='$runtime')process.exit(1)"
+          done
       - name: Verify packed source, image hashes and output names
         run: node scripts/verify-release-build.mjs
+      - name: Verify Monterey packed source, image hashes and output names
+        if: runner.os == 'macOS'
+        run: node scripts/verify-release-build.mjs --monterey
       - uses: actions/upload-artifact@v4
         with:
           name: preview-${{ matrix.platform }}
@@ -75,6 +86,9 @@ jobs:
             electron-prototype/release-build/*.zip
             electron-prototype/release-build/*.dmg
             electron-prototype/release-build/build-info-*.json
+            electron-prototype/release-build-macos12/*.zip
+            electron-prototype/release-build-macos12/*.dmg
+            electron-prototype/release-build-macos12/build-info-*.json
           if-no-files-found: error
           compression-level: 0
           retention-days: 1
@@ -101,13 +115,14 @@ jobs:
           path: release-assets
       - name: Prepare and verify public page
         run: |
-          node scripts/verify_preview_page.mjs
+          node scripts/build-web-demo.mjs
+          node scripts/verify-public-site.mjs
           node scripts/stage-preview-site.mjs
-      - name: Verify all six downloads and publish preview
+      - name: Verify all ten downloads and publish preview
         env:
           GH_TOKEN: ${{ github.token }}
           EXPECTED_TAG: ${{ inputs.tag }}
-        run: node scripts/publish-preview.mjs
+        run: node scripts/publish-release.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,6 +1,6 @@
 {
   "name": "mofumouse-electron-prototype",
-  "version": "0.1.0-preview.1",
+  "version": "0.1.0-preview.2",
   "private": true,
   "author": "UDteach",
   "description": "Photoreal animal cursor prototype for Windows and macOS",
@@ -14,6 +14,7 @@
     "dist:mac:arm64": "npm run prepare:assets && electron-builder --mac dmg zip --arm64 --publish never",
     "dist:mac:x64": "npm run prepare:assets && electron-builder --mac dmg zip --x64 --publish never",
     "dist:mac": "npm run dist:mac:arm64 && npm run dist:mac:x64",
+    "dist:mac:monterey": "npm run prepare:assets && node scripts/build-monterey.mjs",
     "pack:win": "node scripts/package.mjs win32 x64",
     "pack:mac:arm64": "node scripts/package.mjs darwin arm64",
     "pack:mac:x64": "node scripts/package.mjs darwin x64"

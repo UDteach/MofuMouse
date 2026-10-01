@@ -81,3 +81,25 @@ test('catalog binds tier and action, allowing only the declared static idle fram
   assert.throws(() => api.verifyCatalog(swappedFallback, () => bytes), /Wrong action or tier/);
   api.verifyCatalog(fixture(), () => bytes);
 });
+
+test('append-only frame indices beyond 999 retain action, tier and fallback validation', () => {
+  const catalog = JSON.parse(JSON.stringify(fixture()));
+  const names = new Map(catalog.files.map(f => [f.path, f.path.replace('-000.png', '-1000.png')]));
+  for (const file of [...catalog.files, ...catalog.variants.flatMap(v => v.files)]) file.path = names.get(file.path);
+  for (const animal of catalog.variants) {
+    for (const motion of Object.values(animal.motions)) {
+      for (const tier of [64, 96]) motion.tiers[tier] = motion.tiers[tier].map(p => names.get(p));
+    }
+  }
+  const reads = [];
+  api.verifyCatalog(catalog, p => { reads.push(p); return bytes; });
+  assert.deepEqual(reads, [...names.values()]);
+  assert.equal(api.resolveAnimalId(catalog, 'degu-blue'), 'degu-blue');
+  const wrongTier = structuredClone(catalog);
+  wrongTier.variants[0].motions.walk.tiers[64][0] = wrongTier.variants[0].motions.walk.tiers[96][0];
+  assert.throws(() => api.verifyCatalog(wrongTier, () => bytes), /Wrong action or tier/);
+  for (const path of ['degu-blue/walk/64-10.png', 'degu-blue/walk/64-1000/../1000.png']) {
+    const malformed = structuredClone(catalog); malformed.files[0].path = path;
+    assert.throws(() => api.verifyCatalog(malformed, () => bytes), /Invalid or duplicate image path/);
+  }
+});

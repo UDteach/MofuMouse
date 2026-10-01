@@ -1,16 +1,18 @@
 # MofuMouse
 
-写真風の小動物がマウスカーソルについてくる、Windows / Mac向けの先行版です。
+写真風の小動物がマウスカーソルについてくる、Windows／Mac向けの先行版です。
 
-[ダウンロードと使い方](https://udteach.github.io/MofuMouse/) · [v0.1.0-preview.1](https://github.com/UDteach/MofuMouse/releases/tag/v0.1.0-preview.1)
+[Webでおためし](https://udteach.github.io/MofuMouse/try/) · [ダウンロードと使い方](https://udteach.github.io/MofuMouse/download.html) · [v0.1.0-preview.2](https://github.com/UDteach/MofuMouse/releases/tag/v0.1.0-preview.2)
 
-10種・19種類の姿を収録しています。1〜10匹を表示し、通知領域／メニューバーの「1匹ずつ選ぶ」からそれぞれの動物と色を指定できます。大きさは32 / 48 / 64 / 96px。マウスの速さに合わせて歩き、止まると待機します。動物はクリックを遮りません。
+![10種の表示例](docs/assets/mofumouse-preview-ten-animals.png)
 
-Windows 10/11 x64向けにインストーラーとZIP、macOS 13以降のApple Silicon / Intel向けにDMGとZIPを用意します。Windowsで基本動作を確認しています。Macの実機表示・操作、長時間性能は未確認です。Windowsコード署名、Apple Developer ID署名・公証は行っていません。
+10種・26種類を収録し、デグーは全10色が選べます。1〜10匹を表示して、1匹ずつ種類と毛色を指定できます。大きさは32／48／64／96px。マウスの速さに合わせて歩き、止まると待機します。動物はクリックを遮りません。通知領域／メニューバーから設定・一時停止・終了できます。
 
-動物の寸法、毛色、歩行は調整中です。デグーのブルー／サンドは待機時に静止画を表示します。現在の先行版は、すべての動物が30コマにそろった版ではありません。
+Windows 10／11 x64はインストーラーEXEとZIP。MacはmacOS 13以降の通常版とmacOS 12向け互換版があり、Apple Silicon／Intel別にDMGとZIPを配布します。macOS 11以前、Windows32bit／ARMは対象外です。
 
-## 開発・ビルド
+Windowsで表示と操作を確認しています。MacはCIビルド・構成・署名整合性を確認しますが、実機での表示・操作とMontereyの起動は未確認です。Windowsコード署名、Apple Developer ID署名・公証は未実施です。[確認状況と初回起動](https://udteach.github.io/MofuMouse/download.html#support)
+
+## 開発とビルド
 
 Node.js 24を使います。
 
@@ -21,13 +23,10 @@ npm run check
 npm start
 ```
 
-```sh
-npm run dist:win
-npm run dist:mac
-```
+Windows上で `npm run dist:win`、Mac上で `npm run dist:mac` と `npm run dist:mac:monterey` を実行します。出力先は `release-build/` と `release-build-macos12/`。動物素材はレビュー済みの固定PNG列を同梱し、起動時にもhashを確認します。
 
-Windowsの配布物はWindowsで、Macの配布物はMacで作ります。出力先は `electron-prototype/release-build/` です。動物素材は検証済みの固定PNG列を同梱し、起動時にもhashを確認します。制作中の素材をビルド時に自動で取り込みません。
+Webデモはルートで `node scripts/build-web-demo.mjs` を実行し、`docs/` をHTTPサーバーで開きます。デモとアプリは追従計算と同じPNGを使い、デモはページ内だけに表示します。
 
-[詳しい開発手順](electron-prototype/README.md) · [先行版の内容](docs/publishing/preview-release-notes.md) · [公開手順](docs/publishing/README.md)
+[開発手順](electron-prototype/README.md) · [今回の更新](docs/publishing/preview-release-notes.md) · [公開手順](docs/publishing/README.md)
 
-この先行版はElectronで実装しています。以前のGo版のソースは保持しており、説明は [旧版README](docs/legacy-go-readme.md) に残しています。旧版の1px移動やショートカット補助機能は現先行版に含みません。
+ほかの動物の追加色は制作中で、歩行のコマ数は種類によって異なります。この版は全色の制作完了を意味しません。旧Go版のソースは保持しています。[旧版README](docs/legacy-go-readme.md)

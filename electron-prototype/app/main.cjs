@@ -5,9 +5,11 @@ const crypto = require('node:crypto');
 const { pathToFileURL } = require('node:url');
 const { loadCatalog, resolveAnimalIds, animalMenu } = require('./catalog.cjs');
 const { readSettings, writeSettings } = require('./settings-store.cjs');
+const { captureCurrent } = require('./capture-current.cjs');
 const option = (key, fallback) => process.argv.find(s => s.startsWith(`--${key}=`))?.slice(key.length + 3) ?? fallback;
 const catalogSmoke = process.argv.includes('--catalog-smoke');
 const smoke = process.argv.includes('--smoke') || catalogSmoke;
+const smokeDisplayRebuild = smoke && process.argv.includes('--smoke-display-rebuild');
 const reportFile = option('report', path.join(process.cwd(), 'qa/smoke.json'));
 const started = performance.now();
 app.setName('MofuMouse');
@@ -91,14 +93,15 @@ function ensureOverlay(display) {
   if (process.platform === 'darwin') win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   win.webContents.on('will-navigate', e => e.preventDefault());
-  win.webContents.on('render-process-gone', (_event, details) => fail(`Renderer stopped: ${details.reason}`));
-  win.webContents.on('did-fail-load', (_event, code, description) => fail(`Page load failed ${code}: ${description}`));
+  const isCurrent = () => !win.isDestroyed() && overlays.get(display.id) === win;
+  win.webContents.on('render-process-gone', (_event, details) => { if (isCurrent()) fail(`Renderer stopped: ${details.reason}`); });
+  win.webContents.on('did-fail-load', (_event, code, description) => { if (isCurrent()) fail(`Page load failed ${code}: ${description}`); });
   win.on('focus', () => report.focusEvents++);
-  win.on('closed', () => { overlays.delete(display.id); ready.delete(win.id); loaded.delete(win.id); });
+  win.on('closed', () => { if (overlays.get(display.id) === win) overlays.delete(display.id); ready.delete(win.id); loaded.delete(win.id); });
   const handle = win.getNativeWindowHandle();
   report.overlays.push({ id: display.id, windowId: win.id, bounds: display.bounds, workArea: display.workArea, scaleFactor: display.scaleFactor, nativeHandle: handle.length === 8 ? handle.readBigUInt64LE().toString() : handle.readUInt32LE().toString(), transparent: true, clickThroughRequested: true, focusable: win.isFocusable() });
   overlays.set(display.id, win);
-  win.loadFile(path.join(__dirname, 'overlay.html')).catch(e => fail(e.message));
+  win.loadFile(path.join(__dirname, 'overlay.html')).catch(e => { if (isCurrent()) fail(e.message); });
   return win;
 }
 function fail(message) {
@@ -135,21 +138,42 @@ function tick() {
   }
 }
 async function capture(name) {
-  const win = currentDisplay && overlays.get(currentDisplay.id);
-  if (!win || !loaded.has(win.id) || !latest?.pets.length) return;
-  const origin = currentDisplay.bounds;
-  const left = Math.max(0, Math.floor(Math.min(...latest.pets.map(p => p.x)) - origin.x - 20));
-  const top = Math.max(0, Math.floor(Math.min(...latest.pets.map(p => p.y)) - origin.y - 20));
-  const right = Math.min(origin.width, Math.ceil(Math.max(...latest.pets.map(p => p.x + p.width)) - origin.x + 20));
-  const bottom = Math.min(origin.height, Math.ceil(Math.max(...latest.pets.map(p => p.y + p.height)) - origin.y + 20));
-  const image = await win.webContents.capturePage({ x: left, y: top, width: right - left, height: bottom - top });
+  const requestedSelection = selection;
+  const { image, snapshot } = await captureCurrent({
+    snapshot: () => {
+      if (finishing || selection !== requestedSelection) throw new Error(`Capture selection changed: ${name}`);
+      const win = currentDisplay && overlays.get(currentDisplay.id);
+      if (!win || win.isDestroyed() || !loaded.has(win.id) || !latest?.pets.length) return null;
+      const stats = report.rendererStats[win.id];
+      if (stats?.selection !== selection || !stats.painted) return null;
+      if (catalogCase && !latest.pets.every(p => stats.seen?.includes(`${p.action}:${p.frame}`))) return null;
+      const origin = currentDisplay.bounds;
+      const left = Math.max(0, Math.floor(Math.min(...latest.pets.map(p => p.x)) - origin.x - 20));
+      const top = Math.max(0, Math.floor(Math.min(...latest.pets.map(p => p.y)) - origin.y - 20));
+      const right = Math.min(origin.width, Math.ceil(Math.max(...latest.pets.map(p => p.x + p.width)) - origin.x + 20));
+      const bottom = Math.min(origin.height, Math.ceil(Math.max(...latest.pets.map(p => p.y + p.height)) - origin.y + 20));
+      if (right <= left || bottom <= top) throw new Error(`Empty capture bounds: ${name}`);
+      if (catalogSmoke && smokeDisplayRebuild && !report.captureRebuildInjected) {
+        report.captureRebuildInjected = { retiredWindowId: win.id };
+        queueMicrotask(() => screen.emit('display-metrics-changed', {}, currentDisplay, ['bounds']));
+      }
+      return { window: win, displayId: currentDisplay.id, selection, animalId: selectedId,
+        rect: { x: left, y: top, width: right - left, height: bottom - top } };
+    },
+    isCurrent: shot => !shot.window.isDestroyed() && overlays.get(shot.displayId) === shot.window && shot.selection === selection,
+    onRetired: (shot, error) => {
+      report.captureRetirements ??= [];
+      report.captureRetirements.push({ name, windowId: shot.window.id, selection: shot.selection, error: error?.message ?? null });
+    }
+  });
   const file = path.join(path.dirname(reportFile), `${path.basename(reportFile, '.json')}-${name}.png`);
   fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, image.toPNG());
-  report.captures.push({ name, animalId: selectedId, path: file, dimensions: image.getSize(), sha256: hash(image.toPNG()) });
+  report.captures.push({ name, animalId: snapshot.animalId, windowId: snapshot.window.id, selection: snapshot.selection, path: file, dimensions: image.getSize(), sha256: hash(image.toPNG()) });
 }
 function smokeSchedule() {
   const menu = id => { const item = trayMenu.getMenuItemById(id); if (!item?.click) return fail(`Missing tray command ${id}`); item.click(); };
   const later = (ms, fn) => setTimeout(() => { if (!finishing) Promise.resolve().then(fn).catch(e => fail(e.message)); }, ms);
+  if (smokeDisplayRebuild) later(1000, () => screen.emit('display-metrics-changed', {}, screen.getPrimaryDisplay(), ['workArea']));
   later(3000, () => capture('walking'));
   later(8000, () => capture('idle'));
   later(10000, () => menu('size-32')); later(10500, () => capture('size32'));
@@ -163,6 +187,15 @@ function smokeSchedule() {
 }
 async function finishSmoke(requestedPass) {
   if (finishing) return;
+  if (requestedPass && !catalogSmoke) {
+    const observed = new Set(Object.values(report.rendererStats).flatMap(s => s.seen ?? []));
+    const complete = ['walk', 'idle'].every(action => selectedAnimal().motions[action].durations.every((_, i) => observed.has(`${action}:${i}`)));
+    report.coverageWaitStartedAtMs ??= performance.now();
+    report.coverageWaitMs = Math.round(performance.now() - report.coverageWaitStartedAtMs);
+    // A loaded machine can miss a displayed frame in one cycle. Observe another
+    // natural cycle, bounded to eight seconds; never fabricate render coverage.
+    if (!complete && report.coverageWaitMs < 8000) { setTimeout(() => void finishSmoke(true), 250); return; }
+  }
   finishing = true; clearInterval(timer);
   report.processes = app.getAppMetrics().map(p => ({ type: p.type, cpu: p.cpu, memory: p.memory }));
   report.finishedAt = new Date().toISOString();
@@ -184,6 +217,7 @@ async function finishSmoke(requestedPass) {
     walkingCaptureDiffers: report.captures.find(c => c.name === 'walking')?.sha256 !== report.captures.find(c => c.name === 'idle')?.sha256
   };
   if (catalogSmoke) report.checks = report.catalogChecks ?? { completedCatalogTest: false };
+  if (smokeDisplayRebuild) report.checks.displayRebuildReprobed = (report.nativeProbeWindows?.length ?? 0) >= 2;
   report.pass = requestedPass && Object.values(report.checks).every(Boolean);
   fs.mkdirSync(path.dirname(reportFile), { recursive: true });
   fs.writeFileSync(reportFile, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
@@ -262,6 +296,11 @@ async function runCatalogSmoke() {
     noRendererErrors: report.errors.length === 0,
     noFocusEvents: report.focusEvents === 0
   };
+  if (smokeDisplayRebuild) {
+    report.catalogChecks.captureRebuildRecovered = Boolean(report.captureRebuildInjected) &&
+      report.captureRetirements?.some(r => r.windowId === report.captureRebuildInjected.retiredWindowId &&
+        report.captures.some(c => c.name === r.name && c.windowId !== r.windowId)) === true;
+  }
   await finishSmoke(true);
 }
 async function start() {
@@ -310,12 +349,20 @@ async function start() {
       const probe = { processId: process.pid, nativeHandle: win.getNativeWindowHandle().readBigUInt64LE().toString(), point, createdAt: new Date().toISOString() };
       fs.mkdirSync(path.dirname(reportFile), { recursive: true });
       fs.writeFileSync(`${reportFile}.live.json`, `${JSON.stringify(probe, null, 2)}\n`, 'utf8');
+      report.nativeProbeWindows ??= [];
+      report.nativeProbeWindows.push(win.id);
       nativeProbeWritten = true;
     }
   });
   ipcMain.on('mofu:failed', (event, message) => { if (trusted(event)) fail(message); });
   const rebuild = () => {
-    for (const win of overlays.values()) win.destroy(); overlays.clear(); loaded.clear(); ready.clear();
+    if (smoke) {
+      nativeProbeWritten = false;
+      fs.rmSync(`${reportFile}.live.json`, { force: true });
+    }
+    const previous = [...overlays.values()];
+    overlays.clear(); loaded.clear(); ready.clear();
+    for (const win of previous) win.destroy();
     model.resetLayout = true; tick();
   };
   screen.on('display-added', rebuild); screen.on('display-removed', rebuild); screen.on('display-metrics-changed', rebuild);
