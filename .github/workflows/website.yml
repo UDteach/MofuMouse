@@ -1,0 +1,43 @@
+name: Publish verified preview website
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing public preview release matching the website
+        required: true
+        default: v0.1.0-preview.2
+        type: string
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: mofumouse-preview-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      EXPECTED_TAG: ${{ inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify original images, page links and actual published downloads
+        run: |
+          node scripts/build-web-demo.mjs
+          node scripts/verify-public-site.mjs
+          node scripts/verify-published-release.mjs
+          node scripts/stage-preview-site.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .site
+      - id: deployment
+        uses: actions/deploy-pages@v4

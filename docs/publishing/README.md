@@ -4,7 +4,11 @@
 
 AnimalsDesktopForRealの実構成を確認した。Electron43.7.5、Mac最小12.0、Apple Silicon／Intel DMG・ZIP、Windows x64 NSIS・ZIP、Macアドホック署名が参照元。MofuMouseの通常版は既存Electron44.4.5／Mac最小13.0を保持し、別名 `macos12` の互換版をElectron43.7.5／Mac最小12.0で作る。同一のレビュー済み画像を使う。Mac実機・Montereyでの起動は未確認と明記する。
 
-公開入口は `.github/workflows/release.yml` の手動起動だけ。pushやtagでは自動起動しない。Actions節約のため、新しいrunはまず1回。失敗時は自動再実行せず原因と追加runの要否を報告する。
+2026-10-01の最新指定「いや、Mac版も公開しておいてくれ」により、Mac通常版・Monterey互換版も今回公開する。Windowsの成功済み配布物は再利用し、修正済みMac構成だけ追加1runでビルド・検証・公開する。これは先のMac担当引継ぎと追加run確認待ちを置き換える直接指示。旧版preview.1は残す。[Macでのローカル検証手順](mac-release-handoff.md)。失敗したまま公開せず、再失敗時に自動の反復実行はしない。
+
+検証済みWindowsの直接公開は `scripts/publish-release.mjs --windows-only`。元Windows jobの成功、Git object一致、build-info、2配布物のサイズとhashを確認して元情報を保持する。Windows2配布物＋build-info＋windows-reuse＋SHA256SUMSの5添付物を公開する。Macの8配布物が欠けたまま全構成公開の検査を通すことはできない。
+
+既存Releaseを確認してWebだけ更新する入口は `.github/workflows/website.yml`。画像・motion・ページ内リンク・実公開済みの配布物とchecksumを検証してPagesへ反映する。Nodeのみで動き、アプリのビルドは行わない。公開可能profileを `docs/release-status.json` へ記録し、準備中のMac新版を配布済みと表示しない。pushやtagでは自動起動しない。追加Actionsの回数制限は維持し、手動dispatchは指示された範囲内で実行する。
 
 1. appの固定3,416PNG、配布契約を含む単体テスト、Windows配布物と実表示を確認する。
 2. `node scripts/build-web-demo.mjs`、`node scripts/verify_preview_page.mjs`、`node scripts/stage-preview-site.mjs` を実行し、desktop/mobileとデモ操作を確認する。

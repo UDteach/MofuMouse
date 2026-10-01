@@ -44,12 +44,17 @@ test('Windows reuse requires unchanged Git objects and retains the original buil
   fs.writeFileSync(path.join(root,`release-assets/build-info-${profile}.json`),JSON.stringify({version,commit:profile==='win32'?original:current,profile,electron,minimumMacOS,packedSourceMatches:true,verifiedPngsPerArchitecture:1,sourceCatalogSha256:hash(catalog),files}));
  }
  const script=fileURLToPath(new URL('../../scripts/publish-release.mjs',import.meta.url));
- const run=sha=>spawnSync(process.execPath,[script,'--check-only'],{cwd:root,env:{...process.env,EXPECTED_TAG:`v${version}`,GITHUB_SHA:sha},encoding:'utf8'});
+ const run=(sha,windowsOnly=false)=>spawnSync(process.execPath,[script,'--check-only',...(windowsOnly?['--windows-only']:[])],{cwd:root,env:{...process.env,EXPECTED_TAG:`v${version}`,GITHUB_SHA:sha},encoding:'utf8'});
  assert.notEqual(run(current).status,0,'cross-commit Windows needs attestation');
  const reusePath=path.join(root,'release-assets/windows-reuse.json'),reuse={status:'pass',originalRun:'123',windowsCommit:original,releaseCommit:current,inputs};
  fs.writeFileSync(reusePath,JSON.stringify(reuse));let result=run(current);assert.equal(result.status,0,result.stderr);assert.equal(JSON.parse(result.stdout).verifiedAssets,15);
  assert.equal(fs.readFileSync(path.join(root,'release-assets/SHA256SUMS.txt'),'utf8').trim().split('\n').length,14);
  assert.equal(JSON.parse(fs.readFileSync(path.join(root,'release-assets/build-info-win32.json'))).commit,original);
+ result=run(current,true);assert.equal(result.status,0,result.stderr);assert.equal(JSON.parse(result.stdout).verifiedAssets,5);
+ assert.equal(fs.readFileSync(path.join(root,'release-assets/SHA256SUMS.txt'),'utf8').trim().split('\n').length,4);
+ const macReport=path.join(root,'release-assets/build-info-darwin.json');fs.renameSync(macReport,macReport+'.hold');
+ assert.equal(run(current,true).status,0,'explicit Windows-only release does not require pending Mac binaries');
+ assert.notEqual(run(current).status,0,'complete release still requires Mac binaries');fs.renameSync(macReport+'.hold',macReport);
  fs.writeFileSync(reusePath,JSON.stringify({...reuse,inputs:[]}));assert.notEqual(run(current).status,0);fs.writeFileSync(reusePath,JSON.stringify(reuse));
  fs.appendFileSync(path.join(root,'electron-prototype/app/media/manifest.json'),'changed');git(['add','.']);git(['commit','--quiet','-m','Changed runtime input']);const changed=git(['rev-parse','HEAD']);
  assert.throws(()=>verifyWindowsInputs(original,changed,root),/Windows input differs/);

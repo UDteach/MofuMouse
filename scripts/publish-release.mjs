@@ -8,9 +8,10 @@ const pkg=JSON.parse(fs.readFileSync('electron-prototype/package.json','utf8'));
 const catalogBytes=fs.readFileSync('electron-prototype/app/media/manifest.json');
 const catalog=JSON.parse(catalogBytes),tag=process.env.EXPECTED_TAG;
 if(tag!==`v${pkg.version}`||!/^v\d+\.\d+\.\d+-preview\.\d+$/.test(tag))throw Error('Preview tag mismatch');
-const profiles=[{id:'win32',electron:'44.4.5',minimum:null,suffixes:['win-x64.exe','win-x64.zip']},
+const allProfiles=[{id:'win32',electron:'44.4.5',minimum:null,suffixes:['win-x64.exe','win-x64.zip']},
  {id:'darwin',electron:'44.4.5',minimum:'13.0',suffixes:['mac-arm64.dmg','mac-arm64.zip','mac-x64.dmg','mac-x64.zip']},
  {id:'macos12',electron:'43.7.5',minimum:'12.0',suffixes:['macos12-arm64.dmg','macos12-arm64.zip','macos12-x64.dmg','macos12-x64.zip']}];
+const profiles=process.argv.includes('--windows-only')?allProfiles.filter(p=>p.id==='win32'):allProfiles;
 const expected=profiles.flatMap(p=>p.suffixes.map(s=>`MofuMouse-${pkg.version}-${s}`));
 let windowsReuse=false;
 const reports=profiles.map(p=>{

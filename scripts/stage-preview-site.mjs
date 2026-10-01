@@ -8,6 +8,7 @@ for (const asset of local) if (!fs.existsSync(path.join('docs', asset))) throw n
 fs.mkdirSync('.site', { recursive: true });
 fs.copyFileSync('docs/index.html', '.site/index.html');
 fs.copyFileSync('docs/download.html', '.site/download.html');
+fs.copyFileSync('docs/release-status.json', '.site/release-status.json');
 fs.cpSync('docs/assets', '.site/assets', { recursive: true });
 fs.cpSync('docs/try', '.site/try', { recursive: true });
 fs.writeFileSync('.site/.nojekyll', '', 'utf8');

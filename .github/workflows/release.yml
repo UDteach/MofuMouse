@@ -138,6 +138,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           EXPECTED_TAG: ${{ inputs.tag }}
         run: node scripts/publish-release.mjs
+      - name: Verify public release downloads and their published checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_TAG: ${{ inputs.tag }}
+        run: node scripts/verify-published-release.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
