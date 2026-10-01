@@ -7,8 +7,14 @@ on:
         required: true
         default: v0.1.0-preview.2
         type: string
+      windows_run:
+        description: Optional prior Windows run; exact app and build inputs must match
+        required: false
+        default: ''
+        type: string
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: mofumouse-preview-release
   cancel-in-progress: false
@@ -18,11 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: windows-2022
-            platform: win32
-          - os: macos-15
-            platform: darwin
+        include: ${{ fromJSON(inputs.windows_run != '' && '[{"os":"macos-15","platform":"darwin"}]' || '[{"os":"windows-2022","platform":"win32"},{"os":"macos-15","platform":"darwin"}]') }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -62,8 +64,11 @@ jobs:
             while IFS= read -r -d '' app; do
               expected_arch=x86_64
               case "$app" in */mac-arm64/*) expected_arch=arm64 ;; esac
-              test "$(lipo -archs "$app/Contents/MacOS/MofuMouse")" = "$expected_arch"
-              test "$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$app/Contents/Info.plist")" = "$minimum"
+              actual_arch="$(lipo -archs "$app/Contents/MacOS/MofuMouse")"
+              actual_minimum="$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$app/Contents/Info.plist")"
+              echo "Verifying $app: architecture=$actual_arch minimum=$actual_minimum"
+              test "$actual_arch" = "$expected_arch"
+              test "$actual_minimum" = "$minimum"
               codesign --verify --deep --strict "$app"
               count=$((count + 1))
             done < <(find "$directory" -maxdepth 2 -name '*.app' -print0)
@@ -79,6 +84,7 @@ jobs:
         if: runner.os == 'macOS'
         run: node scripts/verify-release-build.mjs --monterey
       - uses: actions/upload-artifact@v4
+        if: always() && !cancelled()
         with:
           name: preview-${{ matrix.platform }}
           path: |
@@ -98,6 +104,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write
+      actions: read
       pages: write
       id-token: write
     environment:
@@ -113,6 +120,14 @@ jobs:
           pattern: preview-*
           merge-multiple: true
           path: release-assets
+      - name: Reuse Windows only when its exact app and build inputs match
+        if: inputs.windows_run != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WINDOWS_RUN_INPUT: ${{ inputs.windows_run }}
+        run: node scripts/reuse-windows-build.mjs
+      - name: Collect distribution files from preserved build directories
+        run: node scripts/normalize-release-assets.mjs
       - name: Prepare and verify public page
         run: |
           node scripts/build-web-demo.mjs

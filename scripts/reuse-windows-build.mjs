@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {verifyWindowsInputs} from './windows-inputs.mjs';
+import {normalizeReleaseAssets} from './normalize-release-assets.mjs';
+const run=process.env.WINDOWS_RUN_INPUT,repo=process.env.GITHUB_REPOSITORY,current=process.env.GITHUB_SHA;
+if(!/^\d+$/.test(run??'')||repo!=='UDteach/MofuMouse')throw Error('Invalid Windows reuse request');
+const original=JSON.parse(execFileSync('gh',['run','view',run,'--repo',repo,'--json','headSha,jobs'],{encoding:'utf8'}));
+if(!original.jobs.some(j=>j.name==='build (windows-2022, win32)'&&j.conclusion==='success'))throw Error('Original Windows job did not pass');
+if(!/^[a-f0-9]{40}$/.test(original.headSha))throw Error('Invalid original commit');
+execFileSync('git',['fetch','--no-tags','--depth=1','origin',original.headSha],{stdio:'inherit'});
+const inputs=verifyWindowsInputs(original.headSha,current);
+execFileSync('gh',['run','download',run,'--repo',repo,'--name','preview-win32','--dir','release-assets'],{stdio:'inherit'});
+normalizeReleaseAssets();
+const report=JSON.parse(fs.readFileSync('release-assets/build-info-win32.json'));
+if(report.commit!==original.headSha||!report.packedSourceMatches)throw Error('Windows build provenance differs');
+fs.writeFileSync('release-assets/windows-reuse.json',JSON.stringify({status:'pass',originalRun:run,windowsCommit:original.headSha,releaseCommit:current,inputs},null,2)+'\n');
+console.log(JSON.stringify({reusedWindowsRun:run,verifiedInputs:inputs.length,windowsCommit:original.headSha,releaseCommit:current}));

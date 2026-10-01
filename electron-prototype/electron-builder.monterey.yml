@@ -1,0 +1,7 @@
+extends: ./electron-builder.yml
+electronVersion: '43.7.5'
+directories:
+  output: release-build-macos12
+artifactName: MofuMouse-${version}-macos12-${arch}.${ext}
+mac:
+  minimumSystemVersion: '12.0'

@@ -1,90 +1,44 @@
-# MofuMouse Electron 試作
+# MofuMouse Electron
 
-写真風の動物がカーソルに付いてきます。Goは使わず、ElectronとJavaScriptでWindows/macOSの処理を共有します。
+Windows／Mac向けのカーソル追従アプリ。preview.2は10種・26姿、デグー全10色、レビュー済みPNG3,416枚を収録します。他種の追加40色は別の制作作業として継続中です。
 
 ## 操作
 
-- タスクトレイ（Macではメニューバー）の動物アイコンから「1匹ずつ選ぶ → 1匹目/2匹目… → 種類 → 色」で、順番ごとに動物を指定できます。「動物・毛色（全員）」ではまとめて変更します。
-- それぞれの選択は次回起動にも保存されます。匹数を減らしても、隠れた順番の指定を保持します。
-- 同じメニューで1〜10匹・32/48/64/96pxを選べます。初期値は10匹・48px。
-- カーソルの速さに合わせて歩行速度が変わり、止まると待機・まばたきになります。
-- 動物はクリックを遮らず、文字入力のフォーカスも取りません。
-- 一時停止／再開／終了は同じメニュー。終了キーはWindowsでCtrl+Alt+Shift+Q、MacでCommand+Option+Shift+Q。
-- 複数画面ではカーソルがいる画面に隊列を移します。画面をまたぐ一本の隊列ではありません。
+通知領域／メニューバーの動物アイコンで、1〜10匹・32／48／64／96px・一時停止／再開／終了を選びます。「1匹ずつ選ぶ」は各順番の種類と毛色を保存し、隠れた順番も保持します。「動物・毛色（全員）」で全員を変更します。既定10匹・48px、保存設定があればそれを使います。
 
-現在のローカル試作は10種・25種類の姿を収録しています。
+終了キーはWindowsでCtrl+Alt+Shift+Q、MacでCommand+Option+Shift+Q。クリックを通す透明Canvasを画面ごとに1つ使い、カーソルのある画面へ隊列を移します。MacのSpaces・フルスクリーンや実モニタの抜き差しは追加実機確認が必要です。
 
-| 動物 | 選べる色 |
-|---|---|
-| デグー | アグーチ、ブルー、サンド、ホワイト、アグーチパイド、ブルーパイド、ブラックパイド、サンドパイド、クリームパイド |
-| チンチラ | スタンダードグレー、ベージュ、エボニー |
-| ハムスター | ゴールデン、クリーム、ブラック、セーブル、シナモン、ダヴ |
-| モルモット | ゴールデン |
-| マカロニマウス | タン |
-| ウサギ | ルビーアイホワイト |
-| ハリネズミ | ソルト＆ペッパー |
-| フェレット | セーブル |
-| シマリス | ノーマル |
-| ファンシーマウス | ブラックアイホワイト |
+## ビルド
 
-収録済みのデグー9色は歩行と待機のまばたきを備えています。黒のデグーは素材の準備が済み、見た目の手動確認待ちです。他の動物の色違いは制作台帳に沿って順次追加します。公開版の収録内容とローカル試作の進捗は別です。
+Node.js24で `npm ci --no-audit --no-fund`、`npm run check`。起動は `npm start`。Windows上で `npm run dist:win` はx64 NSIS/ZIPを `release-build/` に作ります。ZIPは全体を展開しMofuMouse.exeを開きます。Node/Pythonは配布アプリの実行に不要です。
 
-## Windows
+MacのビルドはMac上で行います。
 
-先行版はインストーラーEXE、またはZIPを利用します。ZIPを展開したフォルダー内の `MofuMouse.exe` を起動します。exeだけを他へ移さず、フォルダー全体を保持してください。別途Node.jsを入れる必要はありません。
-
-ソースから作る場合はNode.js 24を使います。
-
-```powershell
-npm ci --no-audit --no-fund
-npm run check
-npm run dist:win
-node scripts/verify-release-build.mjs
-node scripts/smoke.mjs release-build/win-unpacked/MofuMouse.exe
-```
-
-出力先は `release-build/` です。旧開発用 `pack:win` は別の `release/MofuMouseElectron-win32-x64/` を生成します。
-
-## Macで作って試す
-
-**Mac実機の起動・表示は未検証です。** macOS 13以降が対象です。Mac上のElectron BuilderでApple Silicon/Intel向けDMG・ZIPを作成し、アドホック署名の整合性を確認します。Node.js 24があるMacで次を実行します。
-
-```bash
-npm ci
-npm run check
+```sh
 npm run dist:mac
 node scripts/verify-release-build.mjs
+npm run dist:mac:monterey
+node scripts/verify-release-build.mjs --monterey
 ```
 
-出力先は `release-build/`、アプリ本体は `mac-arm64/MofuMouse.app` と `mac/MofuMouse.app` です。片方だけ作る場合は `dist:mac:arm64` または `dist:mac:x64`。WindowsでMac梱包を試行した際はシンボリックリンク作成権限がなくスキップされたため、CIでもMacランナーを使います。
+通常版はElectron44.4.5／macOS最小13.0、互換版はElectron43.7.5／macOS最小12.0です。Apple Silicon／Intel別DMG/ZIP。通常版は `release-build/`、互換版は `release-build-macos12/`。アドホック署名の整合性を確認しますが、Developer ID署名・公証は未実施です。OSセキュリティの一括解除コマンドは配布しません。macOS11以前へは自動で古い実行環境を下げません。
 
-旧ソースキットの `build-mac.command` / `pack:mac:*` はローカルの未署名試作を作る別経路です。配布物は上記Builderの経路で作ってください。Developer ID署名・公証は未実施。Gatekeeperや権限の設定を変更する処理は含みません。
+Windowsコード署名は未実施。Mac実機の表示・操作、Monterey実機での起動は未確認です。OS別パッケージと初回起動は [DLページ](https://udteach.github.io/MofuMouse/download.html) に記載しています。
 
-## 素材・実装
+## 固定素材とWebデモ
 
-- 動物ごとの歩行・待機の実コマ数と実時間を保持します。デグーの基準歩行は30コマ/556ms。色違いの8コマは8コマのまま扱い、待機も完成済みFlow/色違い版を使用します。
-- 公開preview.1には64/96px用の計2,650枚を収録しています。現在のローカル開発版は、モルモット・ウサギ・フェレット・チンチラ・ハムスター・シマリス・マウスの歩行を30コマへ更新して2,740枚です。SHA-256を起動時にも確認します。メモリーには表示中の種類のみを読み込み、同じ動物の画像は共有します。連続選択時の古い読み込み結果は破棄します。
-- 同種の基準歩行に合わせて、歩行と待機にそれぞれ一定の表示倍率・接地位置を設定しています。元PNGは変更しません。コマごとの体形変化や毛色のちらつきが残る素材は修正中です。
-- 新しく制作・修正する歩行はデグーに合わせた30実ポーズを基準にしています。現在の暫定カタログには18〜30コマの基準歩行と8コマの色違いがあり、まだ全種類が30コマではありません。
-- カーソル速度は経過時間で計算し、100msの平滑化後、歩行倍率0.45〜1.5に変換します。画像を間引かず再生位相を維持します。
-- 1画面につき1枚の透明Canvasを使い、10匹でも10ウィンドウにはしません。画面座標とサイズはDIPです。
-- `app/motion.mjs` はOSに依存しない計算、`main.cjs` はウィンドウ・トレイ、`renderer.mjs` はPNGの描画です。
-- 元素材と既存Go版は維持し、試作は別の設定フォルダー `MofuMouseElectronPrototype` を使います。
+`app/media/manifest.json` の3,416PNGを起動・梱包前後にSHA-256で照合します。ビルドは作業中の素材台帳を再取り込みしません。デグーの歩行は全10色30実コマ／556ms。色違いの待機は8コマ／4秒、アグーチ基準色は元の96コマ待機を保持します。他種の歩行コマ数は種類によって異なります。
 
-Electron 44.4.5 / electron-builder 26.15.3 / 開発用@electron/packager 20.3.0をlockfileで固定しています。Electron本体を含むWindows梱包は数百MBで、軽量化はまだ行っていません。
+表示倍率・接地位置はmotion単位の共通変換で、元PNGを変更しません。制作候補、source採用、runtime採用を区別します。新規採用は `integrate-reviewed-coat.py` のhash-bound receiptとレビューでstage→applyし、既存原本・旧出力・生成回数を保持します。
 
-## 検証の境界
+ルートの `node scripts/build-web-demo.mjs` は同じH96 PNG1,708枚と `app/motion.mjs` を `docs/try/` へコピーします。Web用カタログに内部制作記録を含めません。デモは選択中の種類のみデコードし、タブ非表示では描画を休み、動きを減らす設定では停止して開始します。
 
-2026-09-28: 単体テスト16件。基本表示テストは14項目、カタログ表示テストは15項目です。19種類の歩行・待機の読み込みと描画、異なる3種類/10種類の混在、個別指定、隠れた順番の選択保持、4サイズ、速度変化、停止／再開、連続選択、一時停止中の選択を確認します。表示テストは実ウィンドウに診断用カーソル軌跡を与え、OSカーソル自体は動かしません。合否は各JSONのpassとchecksで確認してください。
+## 検証
 
-実画面の抜き差し、混在DPI、macOSのSpaces／フルスクリーン挙動、長時間の性能は別途実機確認が必要です。透明アプリ画面のキャプチャは確認済みですが、デスクトップ全体の録画は取得していません。
+30件の単体・配布契約テスト。Windows配布アプリでは全26姿を切り替え、全画像の読み込み・個別指定・混在3／10種・隠れた順番・連続選択・停止／再開・フォーカスを確認します。黒の個別smokeは30歩行／8待機の全実描画、4サイズ、overlay再作成を確認しました。Native検査はウィンドウの透過・noActivate属性と背後へのhitを読み取ります。診断カーソル軌跡を与え、OSカーソルは動かしません。smokeは独立プロファイルを使い、通常の設定を変更しません。
 
-診断結果は `qa/smoke-packaged.json` と `qa/catalog-packaged.json`、Windowsの属性検証は `qa/native-catalog-windows.json`。切り替えテストのPNG41枚も同フォルダーへ保存します。キャプチャは指定フレームの描画確認で、全モーションの目視合格を意味しません。
+`verify-release-build.mjs` は全アーキテクチャのapp.asar内ソース・PNGと成果物hashを照合します。MacCIでは4appのCPU・最小OS・署名、ホストCPUの実行環境版も確認します。CIでの検証は実機の見た目の確認と別です。
 
-画面構成変更の回帰確認は、実行ファイルへ `--smoke --smoke-display-rebuild --report=<absolute-path>` を渡します。開始1秒後にoverlayを再作成し、新しいウィンドウで検査情報を再発行します。通常の起動ではこの操作は行いません。PNGの実描画コマに不足がある場合、診断だけ最大8秒延長して自然な次周期を観測します。コマ数・時間を変えたり、未描画を合格として数えたりしません。native検査には `<report-path>.live.json` を使い、再作成で一時的に無効なら最大5秒だけ新しい情報を待ちます。
+Webはdesktop／390／320幅で表示・追従・混在・毛色／数／サイズ／背景・一時停止・FAQ・keyboard・通信失敗からの再試行を確認します。物理スマートフォン／SafariとMac実機はこのWindowsホストでは未検証です。
 
-## 新しく完成した素材を取り込む担当者向け
-
-`scripts/import-catalog.py` をプロジェクトのPillow入りPythonで実行すると、readyの基準素材とdone/done_reusedの色違いを読み取り専用で検証し、PNG列と `catalog-snapshot.json` を作ります。採用済みAPNGの合成後フレームを直接デコードし、時間・hash・寸法・alphaを確認します。各担当の制作台帳を変更しません。
-
-この取り込みは明示的な更新時のみ行います。取り込み更新後は `scripts/audit-appearance.py` で計測・目視し、`scripts/normalize-presentation.py` でmotion単位の一定変換を更新します。通常のビルドは固定済み素材を検証するだけなので、制作中の変更を途中で取り込みません。追加の専用lane manifestは親の確認後に別途統合する段階です。Macソースキットは固定PNG列を含み、Mac側にPython/Pillowや元リポジトリは不要です。
+公開手順は [publishing](../docs/publishing/README.md)。`pack:*` とMac source kitは旧ローカル開発経路で、配布版はBuilderを使います。ユーザー設定は既存の `MofuMouseElectronPrototype` フォルダーを保持するためpreview.1から引き継げます。

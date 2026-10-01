@@ -6,13 +6,17 @@ AnimalsDesktopForRealの実構成を確認した。Electron43.7.5、Mac最小12.
 
 公開入口は `.github/workflows/release.yml` の手動起動だけ。pushやtagでは自動起動しない。Actions節約のため、新しいrunはまず1回。失敗時は自動再実行せず原因と追加runの要否を報告する。
 
-1. appの固定3,416PNG、27テスト、Windows配布物と実表示を確認する。
+1. appの固定3,416PNG、配布契約を含む単体テスト、Windows配布物と実表示を確認する。
 2. `node scripts/build-web-demo.mjs`、`node scripts/verify_preview_page.mjs`、`node scripts/stage-preview-site.mjs` を実行し、desktop/mobileとデモ操作を確認する。
 3. package／lockfile／ページ／notesを同じ版へそろえ、レビュー可能なコミットをmainへ反映する。
 4. `gh workflow run release.yml --repo UDteach/MofuMouse --ref main -f tag=v0.1.0-preview.2` を1回実行してrun IDを記録する。
 5. 同じrunでWin2・Mac通常4・Mac互換4の10配布物を作る。Macは4appのCPU・最小OS・署名とホストCPUの実行環境版を確認する。`verify-release-build.mjs` は同梱ソース／画像／出力hashを検証し、通常2＋互換1の3つのbuild-infoを作る。
-6. `scripts/publish-release.mjs` が同一コミット・カタログ・枚数・実行環境・最小OS・全10ファイルを照合し、GitHub prereleaseとPagesを同じrunで更新する。SHA256SUMSは10配布物＋3reportを含む。
+6. `scripts/normalize-release-assets.mjs` はArtifacts内のbuildディレクトリを保持し、配布ファイルを公開用へ集める。`scripts/publish-release.mjs` がソースコミット・カタログ・枚数・実行環境・最小OS・全10ファイルを照合し、GitHub prereleaseとPagesを同じrunで更新する。SHA256SUMSは10配布物＋3reportを含む。
 7. Releaseの14添付物、Pagesのデモ・DLリンク、OS別選択、実ダウンロードを確認する。初回警告・更新・削除・不具合報告の手順を公開ページへ載せる。
+
+Macだけの修正後に検証済みWindowsを再利用する場合は、追加runの承認を得て `windows_run` に元run IDを指定する。成功したWindows job、元コミット、app全体・build全体・package／lockfile・通常builder設定・素材準備スクリプトのGit objectがすべて同じことを確認する。build-infoの元コミットは書き換えず、`windows-reuse.json` に元run・元コミット・公開コミット・一致objectを添付する。公開側でもGit objectを再照合し、全10配布物のサイズとSHA-256を検証する。この場合は15添付物、SHA256SUMSは14ファイル。アプリやWindowsビルド入力が変わった場合は再利用を拒否する。
+
+MontereyのOS設定は `electron-builder.monterey.yml` の文字列 `'12.0'` を使う。CLIの数値変換が起きるdotted overrideを使わない。macOS CIは実際のCPU・LSMinimumSystemVersionをログへ出し、厳密に照合する。
 
 公開ページはindex.html、download.html、assets、tryだけ。制作台帳・QA・ソース画像履歴は配信しない。GitHub上の旧releaseは残す。旧 `publish-preview.mjs` はpreview.1の履歴契約で、今回のワークフローから呼ばない。
 
