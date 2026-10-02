@@ -37,4 +37,4 @@ if(windowsReuse)attachments.push('windows-reuse.json');
 fs.writeFileSync('release-assets/SHA256SUMS.txt',attachments.map(name=>`${hash(fs.readFileSync(path.join('release-assets',name)))}  ${name}\n`).join(''));
 attachments.push('SHA256SUMS.txt');
 if(process.argv.includes('--check-only'))console.log(JSON.stringify({tag,verifiedAssets:attachments.length,publish:false}));
-else execFileSync('gh',['release','create',tag,...attachments.map(n=>path.join('release-assets',n)),'--repo',process.env.GITHUB_REPOSITORY,'--target',process.env.GITHUB_SHA,'--prerelease','--title',`MofuMouse ${tag} — デグー全10色・Webデモ`,'--notes-file','docs/publishing/preview-release-notes.md'],{stdio:'inherit'});
+else execFileSync('gh',['release','create',tag,...attachments.map(n=>path.join('release-assets',n)),'--repo',process.env.GITHUB_REPOSITORY,'--target',process.env.GITHUB_SHA,'--prerelease','--title',`MofuMouse ${tag} — のんびりモード追加`,'--notes-file','docs/publishing/preview-release-notes.md'],{stdio:'inherit'});

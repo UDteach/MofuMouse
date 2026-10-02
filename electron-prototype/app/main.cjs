@@ -8,7 +8,8 @@ const { readSettings, writeSettings } = require('./settings-store.cjs');
 const { captureCurrent } = require('./capture-current.cjs');
 const option = (key, fallback) => process.argv.find(s => s.startsWith(`--${key}=`))?.slice(key.length + 3) ?? fallback;
 const catalogSmoke = process.argv.includes('--catalog-smoke');
-const smoke = process.argv.includes('--smoke') || catalogSmoke;
+const followSmoke = process.argv.includes('--follow-smoke');
+const smoke = process.argv.includes('--smoke') || catalogSmoke || followSmoke;
 const smokeDisplayRebuild = smoke && process.argv.includes('--smoke-display-rebuild');
 const reportFile = option('report', path.join(process.cwd(), 'qa/smoke.json'));
 const started = performance.now();
@@ -75,13 +76,17 @@ function buildMenu() {
     { type: 'separator' },
     { label: '表示する数', submenu: Array.from({ length: 10 }, (_, i) => ({ id: `count-${i + 1}`, label: `${i + 1}匹`, type: 'radio', checked: settings.count === i + 1, click: () => changeSettings({ count: i + 1 }) })) },
     { label: '大きさ', submenu: [32, 48, 64, 96].map(size => ({ id: `size-${size}`, label: `${size}px${size === 48 ? '（標準）' : ''}`, type: 'radio', checked: settings.size === size, click: () => changeSettings({ size }) })) },
+    { label: '追いかけ方', submenu: [
+      { id: 'follow-normal', label: '通常', type: 'radio', checked: settings.followMode === 'normal', click: () => changeSettings({ followMode: 'normal' }) },
+      { id: 'follow-relaxed', label: 'のんびり', type: 'radio', checked: settings.followMode === 'relaxed', click: () => changeSettings({ followMode: 'relaxed' }) }
+    ] },
     { id: 'pause', label: settings.paused ? '表示を再開' : '一時停止', click: () => changeSettings({ paused: !settings.paused }) },
-    { label: '使い方', click: () => dialog.showMessageBox({ type: 'info', title: 'MofuMouse', message: '動物がカーソルに付いてきます。', detail: `「1匹ずつ選ぶ」から順番ごとに指定できます。\n「動物・毛色（全員）」ではまとめて変更します。\n終了: ${process.platform === 'darwin' ? 'Command' : 'Ctrl'} + Alt + Shift + Q\n\n${media.variants.length}種類の姿を収録しています。待機が未完成の色は同じ色の静止画で休みます。` }) },
+    { label: '使い方', click: () => dialog.showMessageBox({ type: 'info', title: 'MofuMouse', message: '動物がカーソルに付いてきます。', detail: `「1匹ずつ選ぶ」から順番ごとに指定できます。\n「動物・毛色（全員）」ではまとめて変更します。\n「追いかけ方」の「のんびり」ではゆっくり追いかけ、カーソルが止まると追いついて休みます。\n終了: ${process.platform === 'darwin' ? 'Command' : 'Ctrl'} + Alt + Shift + Q\n\n${media.variants.length}種類の姿を収録しています。待機が未完成の色は同じ色の静止画で休みます。` }) },
     { type: 'separator' },
     { label: '終了', accelerator: 'CommandOrControl+Alt+Shift+Q', click: () => app.quit() }
   ]);
   tray.setContextMenu(trayMenu);
-  tray.setToolTip(`MofuMouse · ${mixed ? '組み合わせ' : animal.speciesLabel + ' / ' + animal.coatLabel} · ${settings.count}匹 · ${settings.size}px${settings.paused ? ' · 一時停止' : ''}`);
+  tray.setToolTip(`MofuMouse · ${mixed ? '組み合わせ' : animal.speciesLabel + ' / ' + animal.coatLabel} · ${settings.count}匹 · ${settings.size}px${settings.followMode === 'relaxed' ? ' · のんびり' : ''}${settings.paused ? ' · 一時停止' : ''}`);
 }
 function trusted(event) { return [...overlays.values()].some(w => !w.isDestroyed() && w.webContents.id === event.sender.id); }
 function ensureOverlay(display) {
@@ -111,6 +116,10 @@ function fail(message) {
 function diagnosticCursor(t, area) {
   const left = area.x + area.width * 0.27, top = area.y + area.height * 0.44;
   const span = Math.min(400, area.width * 0.40);
+  if (followSmoke) {
+    const x = t < 1 ? left : t < 2 ? left + span : t < 3 ? left : left + 110;
+    return { x: Math.round(x), y: Math.round(top) };
+  }
   if (t < 2) return { x: Math.round(left + t * 55), y: Math.round(top) };
   if (t < 4) return { x: Math.round(left + 110 + span * Math.sin((t - 2) * Math.PI)), y: Math.round(top + 90 * Math.sin((t - 2) * Math.PI * 2)) };
   return { x: Math.round(left + 110), y: Math.round(top) };
@@ -127,6 +136,12 @@ function tick() {
   for (const [id, other] of overlays) if (id !== display.id && other.isVisible()) other.hide();
   if (settings.paused) { if (win.isVisible()) win.hide(); return; }
   latest = { ...model.step(now, cursor, display.workArea), bounds: display.bounds, selection };
+  if (followSmoke && settings.followMode === 'relaxed') {
+    report.followMotion ??= { withinSpeedLimit: true, maxSpeed: 0, maxTrailPoints: 0 };
+    report.followMotion.withinSpeedLimit &&= latest.movementSpeed <= 180 * settings.size / 48 + 0.001;
+    report.followMotion.maxSpeed = Math.max(report.followMotion.maxSpeed, latest.movementSpeed);
+    report.followMotion.maxTrailPoints = Math.max(report.followMotion.maxTrailPoints, model.trail.points.length);
+  }
   if (catalogCase) latest.pets = latest.pets.map(p => ({ ...p, action: catalogCase.action, frame: catalogCase.frame % animalById(p.animalId).motions[catalogCase.action].durations.length }));
   if (loaded.has(win.id)) {
     win.webContents.send('mofu:frame', latest);
@@ -134,7 +149,7 @@ function tick() {
   }
   if (smoke && scenarioStarted !== null && now - sampledAt >= 250) {
     sampledAt = now;
-    report.samples.push({ t: +t.toFixed(2), speed: +latest.speed.toFixed(1), rate: +latest.rate.toFixed(3), settings: { ...settings }, pets: latest.pets.map(p => ({ x: p.x, y: p.y, action: p.action, frame: p.frame })) });
+    report.samples.push({ t: +t.toFixed(2), speed: +latest.speed.toFixed(1), movementSpeed: +latest.movementSpeed.toFixed(1), rate: +latest.rate.toFixed(3), settings: { ...settings }, pets: latest.pets.map(p => ({ x: p.x, y: p.y, action: p.action, frame: p.frame })) });
   }
 }
 async function capture(name) {
@@ -176,6 +191,14 @@ function smokeSchedule() {
   if (smokeDisplayRebuild) later(1000, () => screen.emit('display-metrics-changed', {}, screen.getPrimaryDisplay(), ['workArea']));
   later(3000, () => capture('walking'));
   later(8000, () => capture('idle'));
+  if (followSmoke) {
+    later(9000, () => {
+      const before = { ...model.head };
+      menu('follow-normal'); menu('follow-relaxed');
+      report.followMenuChecked = trayMenu.getMenuItemById('follow-relaxed').checked && !trayMenu.getMenuItemById('follow-normal').checked;
+      report.followSwitchRetainedPosition = Math.hypot(model.head.x - before.x, model.head.y - before.y) < 2;
+    });
+  }
   later(10000, () => menu('size-32')); later(10500, () => capture('size32'));
   later(11000, () => menu('size-64')); later(11500, () => capture('size64'));
   later(12000, () => menu('size-96')); later(12500, () => capture('size96'));
@@ -217,6 +240,14 @@ async function finishSmoke(requestedPass) {
     walkingCaptureDiffers: report.captures.find(c => c.name === 'walking')?.sha256 !== report.captures.find(c => c.name === 'idle')?.sha256
   };
   if (catalogSmoke) report.checks = report.catalogChecks ?? { completedCatalogTest: false };
+  if (followSmoke) {
+    delete report.checks.cursorSpeedVaries;
+    report.checks.followSpeedLimited = report.followMotion?.withinSpeedLimit === true && report.followMotion.maxSpeed > 30;
+    report.checks.followTrailBounded = report.followMotion?.maxTrailPoints <= 2048;
+    report.checks.followMenuChecked = report.followMenuChecked === true;
+    report.checks.followSwitchRetainedPosition = report.followSwitchRetainedPosition === true;
+    report.checks.followArrivedAndIdle = report.samples.some(s => s.t > 7 && s.t < 9 && s.movementSpeed === 0 && s.pets.every(p => p.action === 'idle'));
+  }
   if (smokeDisplayRebuild) report.checks.displayRebuildReprobed = (report.nativeProbeWindows?.length ?? 0) >= 2;
   report.pass = requestedPass && Object.values(report.checks).every(Boolean);
   fs.mkdirSync(path.dirname(reportFile), { recursive: true });
@@ -308,12 +339,15 @@ async function start() {
   media = verifyMedia();
   let saved = { count: 10, size: 48, paused: false };
   let savedAnimals = {};
-  if (!smoke && fs.existsSync(configFile)) { try { const raw = readSettings(configFile); saved = validate(raw); savedAnimals = raw; } catch { /* Invalid saved settings use defaults. */ } }
+  if (!smoke && fs.existsSync(configFile)) { try {
+    const raw = readSettings(configFile);
+    saved = validate({ ...raw, followMode: ['normal', 'relaxed'].includes(raw.followMode) ? raw.followMode : 'normal' }); savedAnimals = raw;
+  } catch { /* Invalid saved settings use defaults. */ } }
   petAnimalIds = resolveAnimalIds(media, savedAnimals);
   if (option('animal', null)) petAnimalIds.fill(option('animal'));
   selectedId = petAnimalIds[0];
   if (!media.variants.some(v => v.id === selectedId)) throw new Error('Unknown requested animal');
-  settings = validate({ ...saved, count: Number(option('count', saved.count)), size: Number(option('size', saved.size)), paused: false });
+  settings = validate({ ...saved, count: Number(option('count', saved.count)), size: Number(option('size', saved.size)), followMode: option('follow-mode', followSmoke ? 'relaxed' : saved.followMode), paused: false });
   model = newModel();
   const icon = nativeImage.createFromPath(path.join(__dirname, 'media', selectedAnimal().motions.idle.tiers[96][0])).resize({ width: 24, height: 16 });
   tray = new Tray(icon); buildMenu(); tray.on('double-click', () => changeSettings({ paused: !settings.paused }));

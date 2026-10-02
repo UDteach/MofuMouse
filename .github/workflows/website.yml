@@ -5,7 +5,7 @@ on:
       tag:
         description: Existing public preview release matching the website
         required: true
-        default: v0.1.0-preview.2
+        default: v0.1.0-preview.3
         type: string
 permissions:
   contents: read

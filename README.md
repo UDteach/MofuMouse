@@ -4,11 +4,11 @@
 
 作者：[kdevelopk（X）](https://x.com/kdevelopk) · [ほかの作品](https://kdevelopk.pages.dev/)
 
-[Webでおためし](https://udteach.github.io/MofuMouse/try/) · [ダウンロードと使い方](https://udteach.github.io/MofuMouse/download.html) · [v0.1.0-preview.2](https://github.com/UDteach/MofuMouse/releases/tag/v0.1.0-preview.2)
+[Webでおためし](https://udteach.github.io/MofuMouse/try/) · [ダウンロードと使い方](https://udteach.github.io/MofuMouse/download.html) · [v0.1.0-preview.3](https://github.com/UDteach/MofuMouse/releases/tag/v0.1.0-preview.3)
 
 ![10種の表示例](docs/assets/mofumouse-preview-ten-animals.png)
 
-10種・26種類を収録し、デグーは全10色が選べます。1〜10匹を表示して、1匹ずつ種類と毛色を指定できます。大きさは32／48／64／96px。マウスの速さに合わせて歩き、止まると待機します。動物はクリックを遮りません。通知領域／メニューバーから設定・一時停止・終了できます。
+10種・26種類を収録し、デグーは全10色が選べます。1〜10匹を表示して、1匹ずつ種類と毛色を指定できます。大きさは32／48／64／96px。「追いかけ方」で通常とのんびりを選べます。のんびりモードはゆっくり加速・減速し、カーソルが止まると追いついて休みます。動物はクリックを遮りません。通知領域／メニューバーから設定・一時停止・終了できます。
 
 Windows 10／11 x64はインストーラーEXEとZIP。MacはmacOS 13以降の通常版とmacOS 12向け互換版があり、Apple Silicon／Intel別にDMGとZIPを配布します。macOS 11以前、Windows32bit／ARMは対象外です。
 

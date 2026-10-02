@@ -10,7 +10,7 @@ test('ten individual choices and hidden slots survive file replacement and a fre
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'mofumouse-settings-'));
   try {
     const file = path.join(root, 'profile', 'settings.json');
-    const settings = { count: 10, size: 64, paused: false, animalId: 'degu-agouti', animalIds: ['degu-agouti', ...Array(9).fill('hamster-dove')] };
+    const settings = { count: 10, size: 64, paused: false, followMode: 'relaxed', animalId: 'degu-agouti', animalIds: ['degu-agouti', ...Array(9).fill('hamster-dove')] };
     store.writeSettings(file, settings);
     store.writeSettings(file, { ...settings, count: 1, size: 32 });
     const module = fileURLToPath(new URL('../app/settings-store.cjs', import.meta.url));

@@ -1,5 +1,18 @@
 # 更新版の公開
 
+## 2026-10-02: のんびりモード（preview.3）
+
+ユーザーの「OK,リリースしよう」により `v0.1.0-preview.3` を公開する。
+最新mainから分離した作業場所に追従モード・テスト・説明だけを反映し、作者リンクと
+既存3,416PNGを保持する。アプリ入力が変わったためWindows再利用は行わない。
+38テスト、Windows通常／のんびり描画・クリック透過、Web操作の検証を引き継ぎ、
+配布版Windowsを追加確認する。同一コミットからrelease.ymlを1回dispatchし、
+Win2・Mac通常4・Monterey4の10配布物と3ビルド情報・checksumを検証して公開する。
+既存Releaseは保持。Mac実機と実4K高DPIマウス未確認の表記を維持する。
+以下のpreview.2の回数・再利用に関する記述は前回の公開履歴。
+
+## 2026-10-01: デグー全10色（preview.2）
+
 2026-10-01のユーザー依頼で、デグー全10色・10種26姿の `v0.1.0-preview.2` を公開する。ユーザーは旧Macの対象をmacOS 12までと指定した。今回の公開は他種40色の制作完了を意味しない。
 
 AnimalsDesktopForRealの実構成を確認した。Electron43.7.5、Mac最小12.0、Apple Silicon／Intel DMG・ZIP、Windows x64 NSIS・ZIP、Macアドホック署名が参照元。MofuMouseの通常版は既存Electron44.4.5／Mac最小13.0を保持し、別名 `macos12` の互換版をElectron43.7.5／Mac最小12.0で作る。同一のレビュー済み画像を使う。Mac実機・Montereyでの起動は未確認と明記する。
